@@ -15,4 +15,4 @@ run: build
 	build/icp-robots
 
 clean:
-	rm -r build
+	-rm -r build
