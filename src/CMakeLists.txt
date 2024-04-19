@@ -14,4 +14,12 @@ qt_add_executable(icp-robots
     window.hpp
 )
 
-target_link_libraries(icp-robots PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+# TODO: REMOVE SANITIZE BEFORE SUBMIT
+# add_compile_options(-fsanitize=address)
+
+target_link_libraries(icp-robots PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+#     -fsanitize=address
+)
