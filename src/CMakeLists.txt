@@ -12,6 +12,10 @@ qt_add_executable(icp-robots
     main.cpp
     window.cpp
     window.hpp
+    obstacle.cpp
+    obstacle.hpp
+    room.cpp
+    room.hpp
 )
 
 # TODO: REMOVE SANITIZE BEFORE SUBMIT
