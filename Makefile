@@ -1,4 +1,4 @@
-.PHONY: build run
+.PHONY: build run clean
 
 build:
 	if [ ! -f build/Makefile ]; then \
