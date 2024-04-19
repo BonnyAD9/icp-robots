@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}",
+                "/usr/include/qt6"
+            ],
+            "defines": []
+        }
+    ],
+    "version": 4
+}

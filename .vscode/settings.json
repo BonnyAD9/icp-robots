@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "*.html": "html",
+        "*.h": "c",
+        "*.d": "makefile",
+        "qapplication": "cpp"
+    }
+}
