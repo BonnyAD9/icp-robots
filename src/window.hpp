@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtWidgets/QWidget>
+#include <QWidget>
 
 namespace icp {
 

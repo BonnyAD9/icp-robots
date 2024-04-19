@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <QtWidgets/QApplication>
+#include <QApplication>
 
 #include "window.hpp"
 
