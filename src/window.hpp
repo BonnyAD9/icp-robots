@@ -15,7 +15,7 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-
+    
 private:
     QPointer<QPushButton> menu_button;
     QPointer<QGraphicsView> room_view;
