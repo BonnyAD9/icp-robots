@@ -12,6 +12,8 @@ qt_add_executable(icp-robots
     main.cpp
     window.cpp
     window.hpp
+    menu.cpp
+    menu.hpp
     obstacle.cpp
     obstacle.hpp
     room.cpp

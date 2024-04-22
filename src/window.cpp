@@ -21,6 +21,12 @@ Window::Window(QWidget *parent) : QWidget(parent) {
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 5, 54, 30);
+    connect(
+        menu_button, &QPushButton::clicked, this, &Window::handleMenuBtnClick
+    );
+
+    menu = new Menu(this);
+    menu->setGeometry(0, 0, 100, 600);
 
     // test Obstacle
     room->add_obstacle(unique_ptr<Obstacle>(
@@ -32,6 +38,10 @@ void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
     room_view->resize(size);
     room->setSceneRect(0, 0, size.width(), size.height());
+}
+
+void Window::handleMenuBtnClick() {
+    menu->show();
 }
 
 } // namespace icp

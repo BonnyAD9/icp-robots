@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QPointer>
 
+#include "menu.hpp"
 #include "room.hpp"
 
 namespace icp {
@@ -15,9 +16,13 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-    
+
+private slots:
+    void handleMenuBtnClick();
+
 private:
     QPointer<QPushButton> menu_button;
+    QPointer<Menu> menu;
     QPointer<QGraphicsView> room_view;
     QPointer<Room> room;
 };
