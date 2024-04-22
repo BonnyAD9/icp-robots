@@ -52,6 +52,7 @@ Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
         Qt::PenJoinStyle::SvgMiterJoin
     ));
     setFlag(ItemIsMovable);
+    setAcceptHoverEvents(true);
 }
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -115,6 +116,53 @@ void Obstacle::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     setRect(rec.normalized());
+}
+
+void Obstacle::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    setResizeCursor(event);
+}
+
+void Obstacle::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
+    setResizeCursor(event);
+}
+
+void Obstacle::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    unsetCursor();
+    QGraphicsRectItem::hoverLeaveEvent(event);
+}
+
+void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
+    constexpr qreal R_BORDER = 2.5;
+
+    auto relPos = event->scenePos() - rect().topLeft();
+
+    int cursor = rect().width() - relPos.x() <= R_BORDER;
+    cursor |= (rect().height() - relPos.y() <= R_BORDER) << 1;
+    cursor |= (relPos.y() <= R_BORDER) << 2;
+    cursor |= (relPos.x() <= R_BORDER) << 3;
+
+    switch (cursor) {
+        case 0b0101:
+        case 0b1010:
+            setCursor(Qt::SizeBDiagCursor);
+            break;
+        case 0b1100:
+        case 0b0011:
+            setCursor(Qt::SizeFDiagCursor);
+            break;
+        case 0b1000:
+        case 0b0001:
+            setCursor(Qt::SizeHorCursor);
+            break;
+        case 0b0100:
+        case 0b0010:
+            setCursor(Qt::SizeVerCursor);
+            break;
+        default:
+            unsetCursor();
+    }
+
+    QGraphicsRectItem::hoverEnterEvent(event);
 }
 
 }

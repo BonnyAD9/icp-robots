@@ -2,6 +2,7 @@
 
 #include <QRectF>
 #include <QGraphicsRectItem>
+#include <QCursor>
 
 namespace icp {
 
@@ -23,8 +24,14 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 private:
     State state;
+
+    void setResizeCursor(QGraphicsSceneHoverEvent *event);
 };
 
 } // namespace icp
