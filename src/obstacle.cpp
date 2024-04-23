@@ -8,27 +8,37 @@
 
 namespace icp {
 
-Obstacle::State operator|=(Obstacle::State &l, const Obstacle::State &r) {
-    return l = static_cast<Obstacle::State>(
+constexpr Obstacle::State operator|(
+    const Obstacle::State &l,
+    const Obstacle::State &r
+) {
+    return static_cast<Obstacle::State>(
         static_cast<int>(l) | static_cast<int>(r)
     );
 }
 
-Obstacle::State operator^=(Obstacle::State &l, const Obstacle::State &r) {
+constexpr Obstacle::State operator|=(
+    Obstacle::State &l,
+    const Obstacle::State &r
+) {
+    return l = l | r;
+}
+
+constexpr Obstacle::State operator^=(
+    Obstacle::State &l,
+    const Obstacle::State &r
+) {
     return l = static_cast<Obstacle::State>(
         static_cast<int>(l) ^ static_cast<int>(r)
     );
 }
 
-Obstacle::State operator&(const Obstacle::State &l, const Obstacle::State &r) {
+constexpr Obstacle::State operator&(
+    const Obstacle::State &l,
+    const Obstacle::State &r
+) {
     return static_cast<Obstacle::State>(
         static_cast<int>(l) & static_cast<int>(r)
-    );
-}
-
-Obstacle::State operator|(const Obstacle::State &l, const Obstacle::State &r) {
-    return static_cast<Obstacle::State>(
-        static_cast<int>(l) | static_cast<int>(r)
     );
 }
 
@@ -52,28 +62,12 @@ Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
         Qt::PenJoinStyle::SvgMiterJoin
     ));
     setFlag(ItemIsMovable);
+    setAcceptHoverEvents(true);
 }
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    constexpr qreal R_BORDER = 2.5;
-
-    state = State::None;
-
-    auto relPos = event->scenePos() - rect().topLeft();
-
-    if (relPos.x() <= R_BORDER) {
-        state |= State::ResizeHorizontal | State::ResizeLeft;
-    } else if (rect().width() - relPos.x() <= R_BORDER) {
-        state |= State::ResizeHorizontal;
-    }
-
-    if (relPos.y() <= R_BORDER) {
-        state |= State::ResizeVertical | State::ResizeTop;
-    } else if (rect().height() - relPos.y() <= R_BORDER) {
-        state |= State::ResizeVertical;
-    }
-
     if (state == State::None) {
+        setCursor(Qt::ClosedHandCursor);
         state = State::Dragging;
     }
     grabMouse();
@@ -115,6 +109,67 @@ void Obstacle::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     setRect(rec.normalized());
+}
+
+void Obstacle::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    setResizeCursor(event);
+}
+
+void Obstacle::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
+    setResizeCursor(event);
+}
+
+void Obstacle::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    unsetCursor();
+    QGraphicsRectItem::hoverLeaveEvent(event);
+}
+
+void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
+    constexpr qreal R_BORDER = 2.5;
+
+    state = State::None;
+
+    auto relPos = event->scenePos() - rect().topLeft();
+
+    if (relPos.x() <= R_BORDER) {
+        state |= State::ResizeHorizontal | State::ResizeLeft;
+    } else if (rect().width() - relPos.x() <= R_BORDER) {
+        state |= State::ResizeHorizontal;
+    }
+
+    if (relPos.y() <= R_BORDER) {
+        state |= State::ResizeVertical | State::ResizeTop;
+    } else if (rect().height() - relPos.y() <= R_BORDER) {
+        state |= State::ResizeVertical;
+    }
+
+    switch (state) {
+        case State::ResizeHorizontal
+             | State::ResizeVertical
+             | State::ResizeLeft
+             | State::ResizeTop:
+        case State::ResizeHorizontal | State::ResizeVertical:
+            setCursor(Qt::SizeBDiagCursor);
+            break;
+        case State::ResizeHorizontal
+             | State::ResizeVertical
+             | State::ResizeTop:
+        case State::ResizeHorizontal
+             | State::ResizeVertical
+             | State::ResizeLeft:
+            setCursor(Qt::SizeFDiagCursor);
+            break;
+        case State::ResizeHorizontal:
+            setCursor(Qt::SizeHorCursor);
+            break;
+        case State::ResizeVertical:
+            setCursor(Qt::SizeVerCursor);
+            break;
+        default:
+            setCursor(Qt::OpenHandCursor);
+    }
+
+    QGraphicsRectItem::hoverEnterEvent(event);
 }
 
 }
