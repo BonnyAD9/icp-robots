@@ -143,31 +143,36 @@ void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
         state |= State::ResizeVertical;
     }
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wswitch"
     switch (state) {
         case State::ResizeHorizontal
-             | State::ResizeVertical
-             | State::ResizeLeft
-             | State::ResizeTop:
+            | State::ResizeVertical
+            | State::ResizeLeft
+            | State::ResizeTop:
         case State::ResizeHorizontal | State::ResizeVertical:
-            setCursor(Qt::SizeBDiagCursor);
-            break;
-        case State::ResizeHorizontal
-             | State::ResizeVertical
-             | State::ResizeTop:
-        case State::ResizeHorizontal
-             | State::ResizeVertical
-             | State::ResizeLeft:
             setCursor(Qt::SizeFDiagCursor);
             break;
+        case State::ResizeHorizontal
+            | State::ResizeVertical
+            | State::ResizeTop:
+        case State::ResizeHorizontal
+            | State::ResizeVertical
+            | State::ResizeLeft:
+            setCursor(Qt::SizeBDiagCursor);
+            break;
         case State::ResizeHorizontal:
+        case State::ResizeHorizontal | State::ResizeLeft:
             setCursor(Qt::SizeHorCursor);
             break;
         case State::ResizeVertical:
+        case State::ResizeVertical | State::ResizeTop:
             setCursor(Qt::SizeVerCursor);
             break;
         default:
             setCursor(Qt::OpenHandCursor);
     }
+    #pragma GCC diagnostic pop
 
     QGraphicsRectItem::hoverEnterEvent(event);
 }
