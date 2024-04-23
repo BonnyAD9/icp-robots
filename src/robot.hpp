@@ -6,7 +6,13 @@ namespace icp {
 
 class Robot : public QGraphicsEllipseItem {
 public:
-    explicit Robot(QPoint center, QGraphicsItem *parent = nullptr);
+    explicit Robot(
+        QPoint center,
+        QPointF speed = QPointF(0, 1),
+        QGraphicsItem *parent = nullptr
+    );
+
+    void move(qreal delta);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -18,9 +24,11 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
-    void hoverMouse();
+    void hover_mouse();
+    void move_by(QPointF delta);
 
     bool grabbed;
+    QPointF speed;
 };
 
 }
