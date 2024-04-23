@@ -1,5 +1,6 @@
 # TODO SET PROPER VALUES BEFORE SUBMIT
 BUILD_TYPE=Debug
+PARALEL=-j 14
 
 .PHONY: build run clean
 
@@ -9,7 +10,7 @@ build:
 		cd build \
 			&& cmake ../src -DCMAKE_BUILD_TYPE=$(BUILD_TYPE); \
 	fi
-	cd build && $(MAKE)
+	cd build && $(MAKE) $(PARALEL)
 
 run: build
 	build/icp-robots
