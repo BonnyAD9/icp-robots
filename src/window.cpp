@@ -22,6 +22,9 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setFrameStyle(QFrame::NoFrame);
+    room_view->setRenderHints(
+        QPainter::Antialiasing | QPainter::SmoothPixmapTransform
+    );
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 5, 54, 30);
