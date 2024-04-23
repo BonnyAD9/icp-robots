@@ -7,58 +7,79 @@
 
 namespace icp {
 
+/**
+ * @brief Diameter of the robot.
+ */
 constexpr qreal ROBOT_DIAMETER = 50;
 
-Robot::Robot(QPoint position, QGraphicsItem *parent) :
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
+Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
     QGraphicsEllipseItem(
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
-    grabbed(false)
+    grabbed(false),
+    speed(speed)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
     setAcceptHoverEvents(true);
 }
 
+void Robot::move(qreal delta) {
+    move_by(speed * delta);
+}
+
+//---------------------------------------------------------------------------//
+//                                PROTECTED                                  //
+//---------------------------------------------------------------------------//
+
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     grabbed = true;
     grabMouse();
-    hoverMouse();
+    hover_mouse();
 }
 
 void Robot::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     grabbed = false;
     ungrabMouse();
-    hoverMouse();
+    hover_mouse();
 }
 
 void Robot::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    auto delta = event->scenePos() - event->lastScenePos();
-
-    auto rec = rect();
-    rec.moveTopLeft(rec.topLeft() + delta);
-
-    setRect(rec);
+    move_by(event->scenePos() - event->lastScenePos());
 }
 
 void Robot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    hoverMouse();
+    hover_mouse();
 }
 
 void Robot::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
-    hoverMouse();
+    hover_mouse();
 }
 
 void Robot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     unsetCursor();
 }
 
-void Robot::hoverMouse() {
+//---------------------------------------------------------------------------//
+//                                 PRIVATE                                   //
+//---------------------------------------------------------------------------//
+
+void Robot::hover_mouse() {
     if (grabbed) {
         setCursor(Qt::ClosedHandCursor);
     } else {
         setCursor(Qt::OpenHandCursor);
     }
+}
+
+void Robot::move_by(QPointF delta) {
+    auto rec = rect();
+    rec.moveTopLeft(rec.topLeft() + delta);
+    setRect(rec);
 }
 
 }
