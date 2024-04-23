@@ -7,7 +7,14 @@
 
 namespace icp {
 
+/**
+ * @brief Diameter of the robot.
+ */
 constexpr qreal ROBOT_DIAMETER = 50;
+
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
 
 Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
     QGraphicsEllipseItem(
@@ -24,6 +31,10 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
 void Robot::move(qreal delta) {
     move_by(speed * delta);
 }
+
+//---------------------------------------------------------------------------//
+//                                PROTECTED                                  //
+//---------------------------------------------------------------------------//
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     grabbed = true;
@@ -52,6 +63,10 @@ void Robot::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
 void Robot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     unsetCursor();
 }
+
+//---------------------------------------------------------------------------//
+//                                 PRIVATE                                   //
+//---------------------------------------------------------------------------//
 
 void Robot::hover_mouse() {
     if (grabbed) {

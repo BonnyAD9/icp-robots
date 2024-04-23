@@ -10,11 +10,26 @@
 
 namespace icp {
 
+/**
+ * @brief Room that can contain robots and obstacles.
+ */
 class Room : public QGraphicsScene {
 public:
+    /**
+     * @brief Creates a new room.
+     * @param parent The Qt object.
+     */
     Room(QObject *parent = nullptr);
 
+    /**
+     * @brief Adds obstacle to the room.
+     * @param obstacle Obstacle to add to the room.
+     */
     void add_obstacle(std::unique_ptr<Obstacle> obstacle);
+    /**
+     * @brief Adds robot to the room.
+     * @param robot Robot to add to the room.
+     */
     void add_robot(std::unique_ptr<Robot> robot);
 
 protected:
