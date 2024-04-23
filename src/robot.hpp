@@ -8,11 +8,12 @@ class Robot : public QGraphicsEllipseItem {
 public:
     explicit Robot(
         QPoint center,
-        QPointF speed = QPointF(0, 1),
+        QPointF speed = QPointF(0, 20), // pixels per second
         QGraphicsItem *parent = nullptr
     );
 
     void move(qreal delta);
+    inline bool is_grabbed() const { return grabbed; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
