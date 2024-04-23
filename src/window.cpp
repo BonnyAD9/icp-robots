@@ -16,8 +16,12 @@ Window::Window(QWidget *parent) : QWidget(parent) {
 
     room = new Room();
     room->setSceneRect(0, 0, 800, 600);
+
     room_view = new QGraphicsView(room, this);
     room_view->setGeometry(0, 0, 800, 600);
+    room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    room_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    room_view->setFrameStyle(QFrame::NoFrame);
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 5, 54, 30);
@@ -38,6 +42,7 @@ void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
     room_view->resize(size);
     room->setSceneRect(0, 0, size.width(), size.height());
+    menu->resize(menu->width(), size.height());
 }
 
 void Window::handleMenuBtnClick() {
