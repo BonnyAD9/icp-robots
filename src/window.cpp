@@ -22,6 +22,9 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setFrameStyle(QFrame::NoFrame);
+    room_view->setRenderHints(
+        QPainter::Antialiasing | QPainter::SmoothPixmapTransform
+    );
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 5, 54, 30);
@@ -32,10 +35,12 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu = new Menu(this);
     menu->setGeometry(0, 0, 100, 600);
 
-    // test Obstacle
+    // test code
     room->add_obstacle(unique_ptr<Obstacle>(
         new Obstacle(QRectF(100, 200, 60, 60))
     ));
+
+    room->add_robot(unique_ptr<Robot>(new Robot(QPoint(200, 100))));
 }
 
 void Window::resizeEvent(QResizeEvent *event) {

@@ -56,7 +56,7 @@ Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
     setBrush(QBrush(QColor(0xff, 0x55, 0x55)));
     setPen(QPen(
         QColor(0xff, 0xff, 0xff),
-        5,
+        6,
         Qt::SolidLine,
         Qt::SquareCap,
         Qt::PenJoinStyle::SvgMiterJoin
@@ -125,7 +125,7 @@ void Obstacle::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
-    constexpr qreal R_BORDER = 2.5;
+    constexpr qreal R_BORDER = 3;
 
     state = State::None;
 

@@ -20,6 +20,8 @@ qt_add_executable(icp-robots
     obstacle.hpp
     room.cpp
     room.hpp
+    robot.cpp
+    robot.hpp
 )
 
 # TODO: REMOVE SANITIZE BEFORE SUBMIT

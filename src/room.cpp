@@ -18,5 +18,11 @@ void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
     obstacles.push_back(obst);
 }
 
+void Room::add_robot(unique_ptr<Robot> robot) {
+    Robot *rob = robot.release();
+    addItem(rob);
+    robots.push_back(rob);
+}
+
 } // namespace icp
 
