@@ -11,6 +11,10 @@ namespace icp {
  * @brief Diameter of the robot.
  */
 constexpr qreal ROBOT_DIAMETER = 50;
+/**
+ * @brief Thickness of the border around the robot.
+ */
+constexpr qreal BORDER_THICKNESS = 6;
 
 //---------------------------------------------------------------------------//
 //                                  PUBLIC                                   //
@@ -24,12 +28,22 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
     speed(speed)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
-    setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
+    setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
     setAcceptHoverEvents(true);
 }
 
 void Robot::move(qreal delta) {
     move_by(speed * delta);
+}
+
+QRectF Robot::hitbox() {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    return rect().adjusted(-ADJ, -ADJ, ADJ, ADJ);
+}
+
+void Robot::set_hitbox(QRectF hitbox) {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    move_to(hitbox.topLeft() + QPointF(ADJ, ADJ));
 }
 
 //---------------------------------------------------------------------------//
@@ -77,8 +91,12 @@ void Robot::hover_mouse() {
 }
 
 void Robot::move_by(QPointF delta) {
+    move_to(rect().topLeft() + delta);
+}
+
+void Robot::move_to(QPointF point) {
     auto rec = rect();
-    rec.moveTopLeft(rec.topLeft() + delta);
+    rec.moveTopLeft(point);
     setRect(rec);
 }
 

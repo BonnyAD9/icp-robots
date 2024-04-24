@@ -37,6 +37,8 @@ protected:
 
 private:
     void tick(qreal delta);
+    void move_robots(qreal delta);
+    void border_collisions(Robot *rob);
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;

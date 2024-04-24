@@ -54,12 +54,41 @@ void Room::timerEvent(QTimerEvent *event) {
 //---------------------------------------------------------------------------//
 
 void Room::tick(qreal delta) {
+    move_robots(delta);
+
+    for (auto r : robots) {
+        if (!r->is_grabbed()) {
+            border_collisions(r);
+        }
+    }
+}
+
+void Room::move_robots(qreal delta) {
     for (auto r : robots) {
         if (!r->is_grabbed()) {
             r->move(delta);
         }
     }
 }
+
+void Room::border_collisions(Robot *rob) {
+    auto box = rob->hitbox();
+
+    if (box.left() < 0) {
+        box.moveLeft(0);
+    } else if (box.right() > width()) {
+        box.moveRight(width());
+    }
+
+    if (box.top() < 0) {
+        box.moveTop(0);
+    } else if (box.bottom() > height()) {
+        box.moveBottom(height());
+    }
+
+    rob->set_hitbox(box);
+}
+
 
 } // namespace icp
 
