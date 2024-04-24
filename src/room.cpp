@@ -187,6 +187,14 @@ void Room::change_robot(Robot *old, Robot *replace) {
     }
 }
 
+void Room::add_obstacle_slot(Obstacle *obstacle) {
+    add_obstacle(unique_ptr<Obstacle>(obstacle));
+}
+
+void Room::add_robot_slot(Robot *robot) {
+    add_robot(unique_ptr<Robot>(robot));
+}
+
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//

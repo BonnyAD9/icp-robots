@@ -49,6 +49,20 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         &Room::run_simulation
     );
 
+    connect(
+        menu,
+        SIGNAL(add_obstacle(Obstacle *)),
+        room,
+        SLOT(add_obstacle_slot(Obstacle *))
+    );
+    
+    connect(
+        menu,
+        SIGNAL(add_robot(Robot *)),
+        room,
+        SLOT(add_robot_slot(Robot *))
+    );
+
     // test code
     room->add_obstacle(unique_ptr<Obstacle>(
         new Obstacle(QRectF(100, 200, 60, 60))

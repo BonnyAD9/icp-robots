@@ -48,6 +48,9 @@ public slots:
     void remove_robot(Robot *r);
     void change_robot(Robot *old, Robot *replace);
 
+    void add_obstacle_slot(Obstacle *obstacle);
+    void add_robot_slot(Robot *robot);
+
 protected:
     void timerEvent(QTimerEvent *event) override;
 
