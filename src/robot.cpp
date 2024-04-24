@@ -36,7 +36,7 @@ void Robot::move(qreal delta) {
     move_by(speed * delta);
 }
 
-QRectF Robot::hitbox() {
+QRectF Robot::hitbox() const {
     constexpr qreal ADJ = BORDER_THICKNESS / 2;
     return rect().adjusted(-ADJ, -ADJ, ADJ, ADJ);
 }

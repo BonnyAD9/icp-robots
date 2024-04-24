@@ -35,7 +35,7 @@ public:
      * @brief Gets the visual bounding box.
      * @return The bounding box of the robot.
      */
-    QRectF hitbox();
+    QRectF hitbox() const;
     /**
      * @brief Sets the visual bounding box of the robot.
      * @param box The visual bounding box of the robot (size may be ignored).
