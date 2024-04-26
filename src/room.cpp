@@ -197,6 +197,18 @@ void Room::tick(qreal delta) {
             }
         }
     }
+
+    auto end = robots.end();
+    for (auto r1 = robots.begin(); r1 != end; ++r1) {
+        if ((*r1)->is_grabbed()) {
+            continue;
+        }
+        for (auto r2 = r1 + 1; r2 != end; ++r2) {
+            if (!(*r2)->is_grabbed()) {
+                robot_collision(*r1, *r2);
+            }
+        }
+    }
 }
 
 void Room::move_robots(qreal delta) {
@@ -287,6 +299,26 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
     c.moveTopLeft(c.topLeft() + m);
     rob->set_hitbox(c);
     return;
+}
+
+void Room::robot_collision(Robot *r1, Robot *r2) {
+    auto c1 = r1->hitbox();
+    auto c2 = r2->hitbox();
+    auto dir = c2.topLeft() - c1.topLeft();
+    auto cw = (c1.width() + c2.width()) / 2;
+    auto dir_len = sqrt(dir.x() * dir.x() + dir.y() * dir.y());
+    auto over = cw - dir_len;
+
+    if (over <= 0) {
+        // No collision
+        return;
+    }
+
+    dir = dir * (over / 2 / dir_len);
+    c1.moveTopLeft(c1.topLeft() - dir);
+    c2.moveTopLeft(c2.topLeft() + dir);
+    r1->set_hitbox(c1);
+    r2->set_hitbox(c2);
 }
 
 } // namespace icp

@@ -40,6 +40,7 @@ private:
     void move_robots(qreal delta);
     void border_collision(Robot *rob);
     void obstacle_collision(Robot *rob, Obstacle *obs);
+    void robot_collision(Robot *r1, Robot *r2);
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
