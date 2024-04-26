@@ -10,6 +10,29 @@ namespace icp {
 
 using namespace std;
 
+enum class Corner : int {
+    TopLeft = 0b00,
+    TopRight = 0b01,
+    BottomLeft = 0b10,
+    BottomRight = 0b11,
+
+    Right = 0b01,
+    Bottom = 0b10,
+};
+
+constexpr Corner operator&(
+    const Corner &l,
+    const Corner &r
+) {
+    return static_cast<Corner>(
+        static_cast<int>(l) & static_cast<int>(r)
+    );
+}
+
+constexpr bool operator*(const Corner &l, const Corner &r) {
+    return (l & r) == r;
+}
+
 /**
  * @brief How often should the robots update their position.
  */
@@ -87,17 +110,38 @@ qreal cl_cross(qreal r, qreal c, qreal n) {
     return sqrt(r * r - dif * dif);
 }
 
-QPointF corner_overlap(qreal cx, qreal cy, qreal r, QPointF p) {
-    auto acx = qAbs(cx);
-    auto acy = qAbs(cy);
+/**
+ * @brief
+ *
+ * @param corner tl: 0, tr: 1, bl: 2, br: 3
+ * @return QPointF
+ */
+QPointF corner_overlap(qreal cx, qreal cy, qreal r, QPointF p, Corner corner) {
+    auto clx = cl_cross(r, cy, p.y());
+    auto x = corner * Corner::Right ? p.x() - cx - clx : cx + clx - p.x();
 
-    auto clx = cl_cross(r, acy, p.y());
-    auto x = cx > 0 ? acx + clx - p.x() : p.x() - acx - clx;
-
-    auto cly = cl_cross(r, acx, p.x());
-    auto y = cy > 0 ? acy + cly - p.y() : p.y() - acy - cly;
+    auto cly = cl_cross(r, cx, p.x());
+    auto y = corner * Corner::Bottom ? p.y() - cy - cly : cy + cly - p.y();
 
     return QPointF(x, y);
+}
+
+QPointF corner_collision(QPointF c, qreal r, QPointF p, Corner corner) {
+    auto o = corner_overlap(c.x(), c.y(), r, p, corner);
+    if (o.x() < o.y()) {
+        c.moveLeft(c.left() - o.x());
+        rob->set_hitbox(c);
+        return p - QPointF();
+    }
+    if (o.y() < o.x()) {
+        c.moveTop(c.top() - o.y());
+        rob->set_hitbox(c);
+        return;
+    }
+    auto mov_vec = r.topLeft() - center;
+    auto mov_len = sqrt(mov_vec.x() * mov_vec.x() + mov_vec.y() * mov_vec.y());
+    mov_vec = mov_vec - mov_vec * (radius / mov_len);
+    c.moveTopLeft(c.topLeft() + mov_vec);
 }
 
 //---------------------------------------------------------------------------//
@@ -184,11 +228,13 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
         // top edge of obstacle
         if (in_range(c.bottom(), r.top(), r.bottom())) {
             c.moveBottom(r.top());
+            rob->set_hitbox(c);
             return;
         }
         // bottom edge of obstacle
         if (in_range(c.top(), r.top(), r.bottom())) {
             c.moveTop(r.bottom());
+            rob->set_hitbox(c);
             return;
         }
         // no overlap
@@ -199,11 +245,13 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
         // left edge of obstacle
         if (in_range(c.right(), r.left(), r.right())) {
             c.moveRight(r.left());
+            rob->set_hitbox(c);
             return;
         }
         // right edge of obstacle
         if (in_range(c.left(), r.left(), r.right())) {
             c.moveLeft(r.right());
+            rob->set_hitbox(c);
             return;
         }
         // no overlap
@@ -214,8 +262,21 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
     auto radius = c.width() / 2;
     // top left corner of obstacle
     if (in_circle(radius, center, r.topLeft())) {
-        auto o = corner_overlap(cx, cy, radius, r.topLeft());
-        // TODO
+        auto o = corner_overlap(cx, cy, radius, r.topLeft(), Corner::TopLeft);
+        if (o.x() < o.y()) {
+            c.moveLeft(c.left() - o.x());
+            rob->set_hitbox(c);
+            return;
+        }
+        if (o.y() < o.x()) {
+            c.moveTop(c.top() - o.y());
+            rob->set_hitbox(c);
+            return;
+        }
+        auto mov_vec = r.topLeft() - center;
+        auto mov_len = sqrt(mov_vec.x() * mov_vec.x() + mov_vec.y() * mov_vec.y());
+        mov_vec = mov_vec - mov_vec * (radius / mov_len);
+        c.moveTopLeft(c.topLeft() + mov_vec);
     }
 }
 
