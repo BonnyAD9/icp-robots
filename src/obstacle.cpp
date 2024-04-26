@@ -63,7 +63,6 @@ Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
         Qt::SquareCap,
         Qt::PenJoinStyle::SvgMiterJoin
     ));
-    setFlag(ItemIsMovable);
     setAcceptHoverEvents(true);
 }
 
@@ -82,16 +81,20 @@ bool Obstacle::is_grabbed() const {
 }
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (state == State::None) {
-        setCursor(Qt::ClosedHandCursor);
-        state = State::Dragging;
+    if (event->button() & Qt::LeftButton) {
+        if (state == State::None) {
+            setCursor(Qt::ClosedHandCursor);
+            state = State::Dragging;
+        }
+        grabMouse();
     }
-    grabMouse();
 }
 
 void Obstacle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    state = State::None;
-    ungrabMouse();
+    if (event->button() & Qt::LeftButton) {
+        state = State::None;
+        ungrabMouse();
+    }
 }
 
 void Obstacle::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {

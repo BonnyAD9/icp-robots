@@ -57,19 +57,25 @@ void Robot::set_hitbox(QRectF hitbox) {
 //---------------------------------------------------------------------------//
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    grabbed = true;
-    grabMouse();
-    hover_mouse();
+    if (event->button() & Qt::LeftButton) {
+        grabbed = true;
+        grabMouse();
+        hover_mouse();
+    }
 }
 
 void Robot::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    grabbed = false;
-    ungrabMouse();
-    hover_mouse();
+    if (event->button() & Qt::LeftButton) {
+        grabbed = false;
+        ungrabMouse();
+        hover_mouse();
+    }
 }
 
 void Robot::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    move_by(event->scenePos() - event->lastScenePos());
+    if (is_grabbed()) {
+        move_by(event->scenePos() - event->lastScenePos());
+    }
 }
 
 void Robot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
