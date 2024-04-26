@@ -28,9 +28,24 @@ public:
      */
     void move(qreal delta);
     /**
+     * @brief Gets the position change from the last move.
+     */
+    QPointF last_move();
+
+    /**
      * @brief Checks whether the robot is grabbed.
      */
     inline bool is_grabbed() const { return grabbed; }
+    /**
+     * @brief Gets the visual bounding box.
+     * @return The bounding box of the robot.
+     */
+    QRectF hitbox() const;
+    /**
+     * @brief Sets the visual bounding box of the robot.
+     * @param box The visual bounding box of the robot (size may be ignored).
+     */
+    void set_hitbox(QRectF hitbox);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -44,9 +59,11 @@ protected:
 private:
     void hover_mouse();
     void move_by(QPointF delta);
+    void move_to(QPointF pos);
 
     bool grabbed;
     QPointF speed;
+    QPointF last_move_vec;
 };
 
 }

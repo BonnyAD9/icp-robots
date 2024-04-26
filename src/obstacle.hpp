@@ -19,6 +19,22 @@ public:
         ResizeTop = 0x10,
     };
 
+    /**
+     * @brief Gets the hitbox of the rectangle.
+     * @return Hitbox of the rectangle.
+     */
+    QRectF hitbox() const;
+    /**
+     * @brief Sets the hitbox of the rectangle.
+     * @param hitbox the new hitbox.
+     */
+    void set_hitbox(QRectF hitbox);
+    /**
+     * @brief Checks whether the obstacle is grabbed by the user.
+     * @return `true` if it is grabbed, otherwise `false`.
+     */
+    bool is_grabbed() const;
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;

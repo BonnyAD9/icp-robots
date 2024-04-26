@@ -11,6 +11,10 @@ namespace icp {
  * @brief Diameter of the robot.
  */
 constexpr qreal ROBOT_DIAMETER = 50;
+/**
+ * @brief Thickness of the border around the robot.
+ */
+constexpr qreal BORDER_THICKNESS = 6;
 
 //---------------------------------------------------------------------------//
 //                                  PUBLIC                                   //
@@ -21,15 +25,31 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
     grabbed(false),
-    speed(speed)
+    speed(speed),
+    last_move_vec(0, 0)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
-    setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
+    setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
     setAcceptHoverEvents(true);
 }
 
 void Robot::move(qreal delta) {
-    move_by(speed * delta);
+    last_move_vec = speed * delta;
+    move_by(last_move_vec);
+}
+
+QPointF Robot::last_move() {
+    return last_move_vec;
+}
+
+QRectF Robot::hitbox() const {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    return rect().adjusted(-ADJ, -ADJ, ADJ, ADJ);
+}
+
+void Robot::set_hitbox(QRectF hitbox) {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    move_to(hitbox.topLeft() + QPointF(ADJ, ADJ));
 }
 
 //---------------------------------------------------------------------------//
@@ -37,19 +57,25 @@ void Robot::move(qreal delta) {
 //---------------------------------------------------------------------------//
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    grabbed = true;
-    grabMouse();
-    hover_mouse();
+    if (event->button() & Qt::LeftButton) {
+        grabbed = true;
+        grabMouse();
+        hover_mouse();
+    }
 }
 
 void Robot::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    grabbed = false;
-    ungrabMouse();
-    hover_mouse();
+    if (event->button() & Qt::LeftButton) {
+        grabbed = false;
+        ungrabMouse();
+        hover_mouse();
+    }
 }
 
 void Robot::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    move_by(event->scenePos() - event->lastScenePos());
+    if (is_grabbed()) {
+        move_by(event->scenePos() - event->lastScenePos());
+    }
 }
 
 void Robot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
@@ -77,8 +103,12 @@ void Robot::hover_mouse() {
 }
 
 void Robot::move_by(QPointF delta) {
+    move_to(rect().topLeft() + delta);
+}
+
+void Robot::move_to(QPointF point) {
     auto rec = rect();
-    rec.moveTopLeft(rec.topLeft() + delta);
+    rec.moveTopLeft(point);
     setRect(rec);
 }
 

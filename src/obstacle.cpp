@@ -8,6 +8,8 @@
 
 namespace icp {
 
+constexpr qreal BORDER_THICKNESS = 6;
+
 constexpr Obstacle::State operator|(
     const Obstacle::State &l,
     const Obstacle::State &r
@@ -56,26 +58,43 @@ Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
     setBrush(QBrush(QColor(0xff, 0x55, 0x55)));
     setPen(QPen(
         QColor(0xff, 0xff, 0xff),
-        6,
+        BORDER_THICKNESS,
         Qt::SolidLine,
         Qt::SquareCap,
         Qt::PenJoinStyle::SvgMiterJoin
     ));
-    setFlag(ItemIsMovable);
     setAcceptHoverEvents(true);
 }
 
+QRectF Obstacle::hitbox() const {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    return rect().adjusted(-ADJ, -ADJ, ADJ, ADJ);
+}
+
+void Obstacle::set_hitbox(QRectF hitbox) {
+    constexpr qreal ADJ = BORDER_THICKNESS / 2;
+    setRect(rect().adjusted(ADJ, ADJ, -ADJ, -ADJ));
+}
+
+bool Obstacle::is_grabbed() const {
+    return state == State::Dragging;
+}
+
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (state == State::None) {
-        setCursor(Qt::ClosedHandCursor);
-        state = State::Dragging;
+    if (event->button() & Qt::LeftButton) {
+        if (state == State::None) {
+            setCursor(Qt::ClosedHandCursor);
+            state = State::Dragging;
+        }
+        grabMouse();
     }
-    grabMouse();
 }
 
 void Obstacle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    state = State::None;
-    ungrabMouse();
+    if (event->button() & Qt::LeftButton) {
+        state = State::None;
+        ungrabMouse();
+    }
 }
 
 void Obstacle::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -125,7 +144,7 @@ void Obstacle::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
-    constexpr qreal R_BORDER = 3;
+    constexpr qreal R_BORDER = BORDER_THICKNESS / 2;
 
     state = State::None;
 
