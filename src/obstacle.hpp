@@ -29,6 +29,11 @@ public:
      * @param hitbox the new hitbox.
      */
     void set_hitbox(QRectF hitbox);
+    /**
+     * @brief Checks whether the obstacle is grabbed by the user.
+     * @return `true` if it is grabbed, otherwise `false`.
+     */
+    bool is_grabbed() const;
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

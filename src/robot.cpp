@@ -25,7 +25,8 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
     grabbed(false),
-    speed(speed)
+    speed(speed),
+    last_move_vec(0, 0)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
@@ -33,7 +34,12 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
 }
 
 void Robot::move(qreal delta) {
-    move_by(speed * delta);
+    last_move_vec = speed * delta;
+    move_by(last_move_vec);
+}
+
+QPointF Robot::last_move() {
+    return last_move_vec;
 }
 
 QRectF Robot::hitbox() const {

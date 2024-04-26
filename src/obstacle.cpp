@@ -8,7 +8,7 @@
 
 namespace icp {
 
-constexpr qreal BORDER_THICKNESS = 3;
+constexpr qreal BORDER_THICKNESS = 6;
 
 constexpr Obstacle::State operator|(
     const Obstacle::State &l,
@@ -75,6 +75,10 @@ QRectF Obstacle::hitbox() const {
 void Obstacle::set_hitbox(QRectF hitbox) {
     constexpr qreal ADJ = BORDER_THICKNESS / 2;
     setRect(rect().adjusted(ADJ, ADJ, -ADJ, -ADJ));
+}
+
+bool Obstacle::is_grabbed() const {
+    return state == State::Dragging;
 }
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {

@@ -28,6 +28,11 @@ public:
      */
     void move(qreal delta);
     /**
+     * @brief Gets the position change from the last move.
+     */
+    QPointF last_move();
+
+    /**
      * @brief Checks whether the robot is grabbed.
      */
     inline bool is_grabbed() const { return grabbed; }
@@ -58,6 +63,7 @@ private:
 
     bool grabbed;
     QPointF speed;
+    QPointF last_move_vec;
 };
 
 }

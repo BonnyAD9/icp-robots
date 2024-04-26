@@ -61,7 +61,7 @@ bool overlaps(QRectF a, QRectF b) {
 
 bool in_circle(qreal radius, QPointF center, QPointF point) {
     auto dist = center - point;
-    return dist.x() * dist.x() + dist.y() * dist.y() < radius;
+    return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius;
 }
 
 bool circle_overlaps_rect(QRectF c, QRectF r) {
@@ -118,30 +118,31 @@ qreal cl_cross(qreal r, qreal c, qreal n) {
  */
 QPointF corner_overlap(qreal cx, qreal cy, qreal r, QPointF p, Corner corner) {
     auto clx = cl_cross(r, cy, p.y());
-    auto x = corner * Corner::Right ? p.x() - cx - clx : cx + clx - p.x();
+    auto x = corner * Corner::Right ? cx - clx - p.x() : cx + clx - p.x();
 
     auto cly = cl_cross(r, cx, p.x());
-    auto y = corner * Corner::Bottom ? p.y() - cy - cly : cy + cly - p.y();
+    auto y = corner * Corner::Bottom ? cy - cly - p.y() : cy + cly - p.y();
 
     return QPointF(x, y);
 }
 
-QPointF corner_collision(QPointF c, qreal r, QPointF p, Corner corner) {
+QPointF corner_collision(Robot *rob, QPointF p, Corner corner) {
+    auto box = rob->hitbox();
+    auto c = (box.topLeft() + box.bottomRight()) / 2;
+    auto r = box.width() / 2;
+    auto m = rob->last_move();
+
     auto o = corner_overlap(c.x(), c.y(), r, p, corner);
-    if (o.x() < o.y()) {
-        c.moveLeft(c.left() - o.x());
-        rob->set_hitbox(c);
-        return p - QPointF();
+    m = QPointF(qAbs(m.x()), qAbs(m.y()));
+    if (m.x() < m.y()) {
+        return QPointF(-o.x(), 0);
     }
-    if (o.y() < o.x()) {
-        c.moveTop(c.top() - o.y());
-        rob->set_hitbox(c);
-        return;
+    if (m.y() < m.x()) {
+        return QPointF(0, -o.y());
     }
-    auto mov_vec = r.topLeft() - center;
-    auto mov_len = sqrt(mov_vec.x() * mov_vec.x() + mov_vec.y() * mov_vec.y());
-    mov_vec = mov_vec - mov_vec * (radius / mov_len);
-    c.moveTopLeft(c.topLeft() + mov_vec);
+    auto mv = p - c;
+    auto ml = sqrt(mv.x() * mv.x() + mv.y() * mv.y());
+    return mv - mv * (r / ml);
 }
 
 //---------------------------------------------------------------------------//
@@ -183,6 +184,17 @@ void Room::tick(qreal delta) {
     for (auto r : robots) {
         if (!r->is_grabbed()) {
             border_collision(r);
+        }
+    }
+
+    for (auto o : obstacles) {
+        if (o->is_grabbed()) {
+            continue;
+        }
+        for (auto r : robots) {
+            if (!r->is_grabbed()) {
+                obstacle_collision(r, o);
+            }
         }
     }
 }
@@ -239,9 +251,7 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
         }
         // no overlap
         return;
-    }
-    // vertical edge
-    if (in_range(cy, r.top(), r.bottom())) {
+    } else if (in_range(cy, r.top(), r.bottom())) {
         // left edge of obstacle
         if (in_range(c.right(), r.left(), r.right())) {
             c.moveRight(r.left());
@@ -261,23 +271,22 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
     // check corner overlap
     auto radius = c.width() / 2;
     // top left corner of obstacle
+    auto m = QPointF(0, 0);
     if (in_circle(radius, center, r.topLeft())) {
-        auto o = corner_overlap(cx, cy, radius, r.topLeft(), Corner::TopLeft);
-        if (o.x() < o.y()) {
-            c.moveLeft(c.left() - o.x());
-            rob->set_hitbox(c);
-            return;
-        }
-        if (o.y() < o.x()) {
-            c.moveTop(c.top() - o.y());
-            rob->set_hitbox(c);
-            return;
-        }
-        auto mov_vec = r.topLeft() - center;
-        auto mov_len = sqrt(mov_vec.x() * mov_vec.x() + mov_vec.y() * mov_vec.y());
-        mov_vec = mov_vec - mov_vec * (radius / mov_len);
-        c.moveTopLeft(c.topLeft() + mov_vec);
+        m = corner_collision(rob, r.topLeft(), Corner::TopLeft);
     }
+    if (in_circle(radius, center, r.topRight())) {
+        m = corner_collision(rob, r.topRight(), Corner::TopRight);
+    }
+    if (in_circle(radius, center, r.bottomRight())) {
+        m = corner_collision(rob, r.bottomRight(), Corner::BottomRight);
+    }
+    if (in_circle(radius, center, r.bottomLeft())) {
+        m = corner_collision(rob, r.bottomLeft(), Corner::BottomLeft);
+    }
+    c.moveTopLeft(c.topLeft() + m);
+    rob->set_hitbox(c);
+    return;
 }
 
 } // namespace icp
