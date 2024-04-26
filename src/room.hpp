@@ -10,17 +10,6 @@
 
 namespace icp {
 
-
-enum class Corner : int {
-    TopLeft = 0b00,
-    TopRight = 0b01,
-    BottomLeft = 0b10,
-    BottomRight = 0b11,
-
-    Right = 0b01,
-    Bottom = 0b10,
-};
-
 /**
  * @brief Room that can contain robots and obstacles.
  */
@@ -52,9 +41,7 @@ private:
     void border_collision(Robot *rob);
     void obstacle_collision(Robot *rob, Obstacle *obs);
     void robot_collision(Robot *r1, Robot *r2);
-    void corner_collision(Robot *rob, QPointF p, Corner corner);
-    void not_collides_or(Robot *rob, QPointF a, QPointF b);
-    bool hard_collision(Robot *r);
+    void corner_collision(Robot *rob, QPointF p);
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
