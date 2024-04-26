@@ -39,6 +39,9 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room->add_obstacle(unique_ptr<Obstacle>(
         new Obstacle(QRectF(100, 200, 60, 60))
     ));
+    room->add_obstacle(unique_ptr<Obstacle>(
+        new Obstacle(QRectF(100, 300, 60, 60))
+    ));
 
     room->add_robot(unique_ptr<Robot>(new Robot(QPoint(200, 100))));
 

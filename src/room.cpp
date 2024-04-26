@@ -10,15 +10,10 @@ namespace icp {
 
 using namespace std;
 
-enum class Corner : int {
-    TopLeft = 0b00,
-    TopRight = 0b01,
-    BottomLeft = 0b10,
-    BottomRight = 0b11,
-
-    Right = 0b01,
-    Bottom = 0b10,
-};
+/**
+ * @brief Small value used for floating point error tolerance
+ */
+constexpr qreal FP_ERROR = 0.00001;
 
 constexpr Corner operator&(
     const Corner &l,
@@ -61,7 +56,7 @@ bool overlaps(QRectF a, QRectF b) {
 
 bool in_circle(qreal radius, QPointF center, QPointF point) {
     auto dist = center - point;
-    return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius;
+    return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius - FP_ERROR;
 }
 
 bool circle_overlaps_rect(QRectF c, QRectF r) {
@@ -84,6 +79,13 @@ bool circle_overlaps_rect(QRectF c, QRectF r) {
         || in_circle(radius, center, r.topRight())
         || in_circle(radius, center, r.bottomRight())
         || in_circle(radius, center, r.bottomLeft());
+}
+
+bool is_inside(QRectF inner, QRectF outer) {
+    return inner.left() > outer.left()
+        && inner.right() < outer.right()
+        && inner.top() > outer.top()
+        && inner.bottom() < outer.bottom();
 }
 
 /**
@@ -124,25 +126,6 @@ QPointF corner_overlap(qreal cx, qreal cy, qreal r, QPointF p, Corner corner) {
     auto y = corner * Corner::Bottom ? cy - cly - p.y() : cy + cly - p.y();
 
     return QPointF(x, y);
-}
-
-QPointF corner_collision(Robot *rob, QPointF p, Corner corner) {
-    auto box = rob->hitbox();
-    auto c = (box.topLeft() + box.bottomRight()) / 2;
-    auto r = box.width() / 2;
-    auto m = rob->last_move();
-
-    auto o = corner_overlap(c.x(), c.y(), r, p, corner);
-    m = QPointF(qAbs(m.x()), qAbs(m.y()));
-    if (m.x() < m.y()) {
-        return QPointF(-o.x(), 0);
-    }
-    if (m.y() < m.x()) {
-        return QPointF(0, -o.y());
-    }
-    auto mv = p - c;
-    auto ml = sqrt(mv.x() * mv.x() + mv.y() * mv.y());
-    return mv - mv * (r / ml);
 }
 
 //---------------------------------------------------------------------------//
@@ -285,19 +268,21 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
     // top left corner of obstacle
     auto m = QPointF(0, 0);
     if (in_circle(radius, center, r.topLeft())) {
-        m = corner_collision(rob, r.topLeft(), Corner::TopLeft);
+        corner_collision(rob, r.topLeft(), Corner::TopLeft);
+        return;
     }
     if (in_circle(radius, center, r.topRight())) {
-        m = corner_collision(rob, r.topRight(), Corner::TopRight);
+        corner_collision(rob, r.topRight(), Corner::TopRight);
+        return;
     }
     if (in_circle(radius, center, r.bottomRight())) {
-        m = corner_collision(rob, r.bottomRight(), Corner::BottomRight);
+        corner_collision(rob, r.bottomRight(), Corner::BottomRight);
+        return;
     }
     if (in_circle(radius, center, r.bottomLeft())) {
-        m = corner_collision(rob, r.bottomLeft(), Corner::BottomLeft);
+        corner_collision(rob, r.bottomLeft(), Corner::BottomLeft);
+        return;
     }
-    c.moveTopLeft(c.topLeft() + m);
-    rob->set_hitbox(c);
     return;
 }
 
@@ -309,7 +294,7 @@ void Room::robot_collision(Robot *r1, Robot *r2) {
     auto dir_len = sqrt(dir.x() * dir.x() + dir.y() * dir.y());
     auto over = cw - dir_len;
 
-    if (over <= 0) {
+    if (over <= FP_ERROR) {
         // No collision
         return;
     }
@@ -319,6 +304,66 @@ void Room::robot_collision(Robot *r1, Robot *r2) {
     c2.moveTopLeft(c2.topLeft() + dir);
     r1->set_hitbox(c1);
     r2->set_hitbox(c2);
+}
+
+void Room::corner_collision(Robot *rob, QPointF p, Corner corner) {
+    auto box = rob->hitbox();
+    auto c = (box.topLeft() + box.bottomRight()) / 2;
+    auto r = box.width() / 2;
+    auto m = rob->last_move();
+
+    auto o = corner_overlap(c.x(), c.y(), r, p, corner);
+    m = QPointF(qAbs(m.x()), qAbs(m.y()));
+    if (m.x() < m.y()) {
+        not_collides_or(rob, QPointF(-o.x(), 0), QPointF(0, -o.y()));
+        return;
+    }
+    if (m.y() < m.x()) {
+        not_collides_or(rob, QPointF(0, -o.y()), QPointF(-o.x(), 0));
+        return;
+    }
+    auto ao = QPointF(qAbs(m.x()), qAbs(m.y()));
+    if (ao.x() < ao.y()) {
+        not_collides_or(rob, QPointF(-o.x(), 0), QPointF(0, -o.y()));
+        return;
+    }
+    if (ao.y() < ao.x()) {
+        not_collides_or(rob, QPointF(0, -o.y()), QPointF(-o.x(), 0));
+        return;
+    }
+    auto mv = p - c;
+    auto ml = sqrt(mv.x() * mv.x() + mv.y() * mv.y());
+    mv = mv - mv * (r / ml);
+
+    box.moveTopLeft(box.topLeft() + mv);
+    rob->set_hitbox(box);
+}
+
+void Room::not_collides_or(Robot *rob, QPointF a, QPointF b) {
+    auto box = rob->hitbox();
+    box.moveTopLeft(box.topLeft() + a);
+    rob->set_hitbox(box);
+
+    if (hard_collision(rob)) {
+        box.moveTopLeft(box.topLeft() - a + b);
+        rob->set_hitbox(box);
+    }
+}
+
+bool Room::hard_collision(Robot *rob) {
+    if (!is_inside(rob->hitbox(), QRectF(0, 0, width(), height()))) {
+        return true;
+    }
+
+    for (auto o : obstacles) {
+        if (o->is_grabbed()) {
+            continue;
+        }
+        if (circle_overlaps_rect(rob->hitbox(), o->hitbox())) {
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace icp
