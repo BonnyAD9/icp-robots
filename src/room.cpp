@@ -307,27 +307,46 @@ void Room::robot_collision(Robot *r1, Robot *r2) {
 }
 
 void Room::corner_collision(Robot *rob, QPointF p, Corner corner) {
+    constexpr qreal M = 1.5;
+
     auto box = rob->hitbox();
     auto c = (box.topLeft() + box.bottomRight()) / 2;
     auto r = box.width() / 2;
     auto m = rob->last_move();
 
     auto o = corner_overlap(c.x(), c.y(), r, p, corner);
+    auto ao = QPointF(qAbs(o.x()), qAbs(o.y()));
+    auto t = pow(ao.x() + ao.y(), M);
+    auto oc = QPointF(o.x() * pow(ao.x(), M), o.y() * pow(ao.y(), M)) / t;
+    oc = QPointF(o.x() - oc.x(), o.y() - oc.y());
+
     m = QPointF(qAbs(m.x()), qAbs(m.y()));
     if (m.x() < m.y()) {
+        o = corner_overlap(c.x(), c.y() - oc.y(), r, p, corner);
+        box.moveTop(box.top() - oc.y());
+        rob->set_hitbox(box);
         not_collides_or(rob, QPointF(-o.x(), 0), QPointF(0, -o.y()));
         return;
     }
     if (m.y() < m.x()) {
+        o = corner_overlap(c.x() - oc.x(), c.y(), r, p, corner);
+        box.moveLeft(box.left() - oc.x());
+        rob->set_hitbox(box);
         not_collides_or(rob, QPointF(0, -o.y()), QPointF(-o.x(), 0));
         return;
     }
-    auto ao = QPointF(qAbs(m.x()), qAbs(m.y()));
+    ao = QPointF(qAbs(o.x()), qAbs(o.y()));
     if (ao.x() < ao.y()) {
+        o = corner_overlap(c.x(), c.y() - oc.y(), r, p, corner);
+        box.moveTop(box.top() - oc.y());
+        rob->set_hitbox(box);
         not_collides_or(rob, QPointF(-o.x(), 0), QPointF(0, -o.y()));
         return;
     }
     if (ao.y() < ao.x()) {
+        o = corner_overlap(c.x() - oc.x(), c.y(), r, p, corner);
+        box.moveLeft(box.left() - oc.x());
+        rob->set_hitbox(box);
         not_collides_or(rob, QPointF(0, -o.y()), QPointF(-o.x(), 0));
         return;
     }
