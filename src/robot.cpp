@@ -25,24 +25,12 @@ constexpr qreal BORDER_THICKNESS = 6;
 //---------------------------------------------------------------------------//
 
 Robot::Robot(QPoint position, QPointF step, QGraphicsItem *parent) :
-    QGraphicsEllipseItem(
-        QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
-    ),
-    grabbed(false),
-    last_move_vec(0, 0)
-{
-    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
-    setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
-    setAcceptHoverEvents(true);
-
-    eye = new QGraphicsEllipseItem(
-        QRectF(0, 0, BORDER_THICKNESS, BORDER_THICKNESS),
-        this
-    );
-    eye->setBrush(QBrush(QColor(0xff, 0xff, 0xff)));
-    eye->setPen(QPen(QColor(0, 0, 0, 0)));
-    set_step(step);
-}
+    Robot(
+        position,
+        atan2(step.y(), step.x()),
+        sqrt(step.x() * step.x() + step.y() * step.y()),
+        parent
+) {}
 
 Robot::Robot(
     QPoint position,
@@ -56,7 +44,7 @@ Robot::Robot(
     grabbed(false),
     last_move_vec(0, 0)
 {
-    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+    setBrush(QBrush(QColor(0xcc, 0x55, 0xcc)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
     setAcceptHoverEvents(true);
 

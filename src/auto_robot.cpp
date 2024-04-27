@@ -1,5 +1,6 @@
 #include "auto_robot.hpp"
 
+#include <QBrush>
 
 namespace icp {
 
@@ -10,16 +11,17 @@ AutoRobot::AutoRobot(
     QPointF step,
     qreal elide_dist,
     qreal elide_rot,
-    qreal rot_speed, // angle per secod
+    qreal rot_speed,
     QGraphicsItem *parent
-) : Robot(position, step, parent),
-    rot_remain(0),
-    elide_dist(elide_dist),
-    elide_rot(elide_rot),
-    rot_speed(rot_speed)
-{
-    sspeed = speed();
-}
+) : AutoRobot(
+    position,
+    atan2(step.y(), step.x()),
+    sqrt(step.x() * step.x() + step.y() * step.y()),
+    elide_dist,
+    elide_rot,
+    rot_speed,
+    parent
+) {}
 
 AutoRobot::AutoRobot(
     QPoint position,
@@ -27,14 +29,17 @@ AutoRobot::AutoRobot(
     qreal speed,
     qreal elide_dist,
     qreal elide_rot,
-    qreal rot_speed, // angle per secod
+    qreal rot_speed,
     QGraphicsItem *parent
 ) : Robot(position, angle, speed, parent),
     sspeed(speed),
+    rot_remain(0),
     elide_dist(elide_dist),
     elide_rot(elide_rot),
     rot_speed(rot_speed)
-{}
+{
+    setBrush(QBrush(QColor(0x55, 0x55, 0xcc)));
+}
 
 void AutoRobot::move(qreal delta, qreal distance) {
     if (rot_remain == 0 && distance <= elide_dist) {

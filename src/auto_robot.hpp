@@ -13,7 +13,7 @@ public:
         QPoint position,
         QPointF step = QPoint(0, 20),
         qreal elide_dist = 20,
-        qreal elide_rot = M_PI / 2.5,
+        qreal elide_rot = M_PI / M_E,
         qreal rot_speed = M_PI / 4, // angle per secod
         QGraphicsItem *parent = nullptr
     );
