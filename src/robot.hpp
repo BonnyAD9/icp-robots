@@ -17,7 +17,7 @@ public:
      */
     explicit Robot(
         QPoint position,
-        QPointF speed = QPointF(0, 20), // pixels per second
+        QPointF step = QPointF(0, 20), // pixels per second
         QGraphicsItem *parent = nullptr
     );
 
@@ -67,6 +67,11 @@ public:
     qreal speed();
 
 protected:
+    void set_step(QPointF step);
+    void set_angle(qreal angle);
+    void set_angle(QPointF angle);
+    void set_speed(qreal speed);
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -75,16 +80,18 @@ protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
-    qreal angle;
-    qreal mspeed;
-
 private:
     void hover_mouse();
     void move_by(QPointF delta);
     void move_to(QPointF pos);
 
+
+    qreal angle;
+    qreal mspeed;
+
     bool grabbed;
     QPointF last_move_vec;
+    QGraphicsEllipseItem *eye;
 };
 
 }
