@@ -22,21 +22,61 @@ constexpr qreal TICK_DELTA = TICK_LEN.count()
     * decltype(TICK_LEN)::period::num
     / static_cast<qreal>(decltype(TICK_LEN)::period::den);
 
+/**
+ * @brief Checks if value is in range.
+ * @param val Value to check.
+ * @param start Smaller value in the range.
+ * @param end Larger value in the range.
+ * @return true if value is in the range, otherwise false.
+ */
 bool in_range(qreal val, qreal start, qreal end) {
     return val > start && val < end;
 }
 
+/**
+ * @brief Checks if point is in circle.
+ * @param radius Radius of the circle.
+ * @param center Center of the circle.
+ * @param point Point to check.
+ * @return true if point is in circle, otherwise false.
+ */
 bool in_circle(qreal radius, QPointF center, QPointF point) {
     auto dist = center - point;
     return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius;
 }
 
-QPointF line_intersection(QPointF p1, QPointF d1, QPointF p2, QPointF d2) {
-    auto x = p1.x() + d1.x() * (p1.x() - p2.x()) / (d2.x() - d1.x());
-    auto y = p1.y() + d1.y() * (p1.y() - p2.y()) / (d2.y() - d1.y());
-    return QPointF(x, y);
+/**
+ * @brief Calculates the discriminant of a 2x2 matrix.
+ * @param a First row.
+ * @param b Second row.
+ */
+qreal cross(QPointF a, QPointF b) {
+    return a.x() * b.y() - a.y() * b.x();
 }
 
+/**
+ * @brief Calculates a point where two lines intersect.
+ * @param p1 Point trough which the first line passes.
+ * @param d1 Direction in which the first line goes.
+ * @param p2 Point trough which the second line passes.
+ * @param d2 Direction in which the second line goes.
+ * @return The intersection point.
+ */
+QPointF line_intersection(QPointF p1, QPointF d1, QPointF p2, QPointF d2) {
+    auto u = cross(p2 - p1, d1) / cross(d1, d2);
+    return p2 + u * d2;
+}
+
+/**
+ * @brief Calculates the distance of a segment from a given point in the given
+ * direction.
+ * @param p Point from which the segment distance is calculated.
+ * @param d Direction of the 'ray'.
+ * @param a First point of the segment (x or y must be smaller than b).
+ * @param b Second point of the segment (x or y must be larger than b).
+ * @return Distance of the segment from the point. INFINITY when the 'ray'
+ * doesn't touch the segment.
+ */
 qreal segment_distance(QPointF p, QPointF d, QPointF a, QPointF b) {
     auto is = line_intersection(p, d, a, a - b);
     if (isnan(is.x())
@@ -53,6 +93,15 @@ qreal segment_distance(QPointF p, QPointF d, QPointF a, QPointF b) {
     return sqrt(v.x() * v.x() + v.y() * v.y());
 }
 
+/**
+ * @brief Calculates the distance of a rectangle from a point in the given
+ * direction.
+ * @param p Point from which to calculate the distance.
+ * @param d Direction from the point ('ray').
+ * @param r Rectangle to calculate the distance from.
+ * @return Distance from the rectangle. INFINITY if the 'ray' doesn't touch the
+ * rectangle.
+ */
 qreal rect_distance(QPointF p, QPointF d, QRectF r) {
     return min({
         segment_distance(p, d, r.topLeft(), r.topRight()),
@@ -98,12 +147,14 @@ void Room::timerEvent(QTimerEvent *event) {
 void Room::tick(qreal delta) {
     move_robots(delta);
 
+    // collisions of robots with the border of the room
     for (auto r : robots) {
         if (!r->is_grabbed()) {
             border_collision(r);
         }
     }
 
+    // collisions of robots with obstacles
     for (auto o : obstacles) {
         if (o->is_grabbed()) {
             continue;
@@ -115,6 +166,7 @@ void Room::tick(qreal delta) {
         }
     }
 
+    // collisions of robots with each other
     auto end = robots.end();
     for (auto r1 = robots.begin(); r1 != end; ++r1) {
         if ((*r1)->is_grabbed()) {
@@ -199,8 +251,6 @@ void Room::obstacle_collision(Robot *rob, Obstacle *obs) {
 
     // check corner overlap
     auto radius = c.width() / 2;
-    // top left corner of obstacle
-    auto m = QPointF(0, 0);
     if (in_circle(radius, center, r.topLeft())) {
         corner_collision(rob, r.topLeft());
         return;

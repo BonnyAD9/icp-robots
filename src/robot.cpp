@@ -24,18 +24,38 @@ constexpr qreal BORDER_THICKNESS = 6;
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
+Robot::Robot(QPoint position, QPointF step, QGraphicsItem *parent) :
+    Robot(
+        position,
+        atan2(step.y(), step.x()),
+        sqrt(step.x() * step.x() + step.y() * step.y()),
+        parent
+) {}
+
+Robot::Robot(
+    QPoint position,
+    qreal angle,
+    qreal speed,
+    QGraphicsItem *parent
+) :
     QGraphicsEllipseItem(
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
-    angle(atan2(speed.y(), speed.x())),
-    mspeed(sqrt(speed.x() * speed.x() + speed.y() * speed.y())),
     grabbed(false),
     last_move_vec(0, 0)
 {
-    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+    setBrush(QBrush(QColor(0xcc, 0x55, 0xcc)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
     setAcceptHoverEvents(true);
+
+    eye = new QGraphicsEllipseItem(
+        QRectF(0, 0, BORDER_THICKNESS, BORDER_THICKNESS),
+        this
+    );
+    eye->setBrush(QBrush(QColor(0xff, 0xff, 0xff)));
+    eye->setPen(QPen(QColor(0, 0, 0, 0)));
+    set_angle(angle);
+    set_speed(speed);
 }
 
 void Robot::move(qreal delta, qreal distance) {
@@ -76,6 +96,28 @@ qreal Robot::speed() {
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//
+
+void Robot::set_step(QPointF step) {
+    set_angle(step);
+    set_speed(sqrt(step.x() * step.x() + step.y() * step.y()));
+}
+
+void Robot::set_angle(qreal angle) {
+    this->angle = angle;
+    auto e = eye->rect();
+    e.moveCenter(
+        rect().center() + orientation_vec() * (ROBOT_DIAMETER / 3)
+    );
+    eye->setRect(e);
+}
+
+void Robot::set_angle(QPointF angle) {
+    set_angle(atan2(angle.y(), angle.x()));
+}
+
+void Robot::set_speed(qreal speed) {
+    mspeed = speed;
+}
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
@@ -131,6 +173,9 @@ void Robot::move_to(QPointF point) {
     auto rec = rect();
     rec.moveTopLeft(point);
     setRect(rec);
+
+    // ensure that the eye of the robot is updated
+    set_angle(angle);
 }
 
 }

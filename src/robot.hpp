@@ -1,5 +1,9 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
+#include <cmath>
+
 #include <QGraphicsEllipseItem>
 
 namespace icp {
@@ -17,7 +21,21 @@ public:
      */
     explicit Robot(
         QPoint position,
-        QPointF speed = QPointF(0, 20), // pixels per second
+        QPointF step = QPointF(0, 20),
+        QGraphicsItem *parent = nullptr
+    );
+
+    /**
+     * @brief Creates a new robot.
+     * @param position Initial position of the robot.
+     * @param angle Rotation of the robot.
+     * @param speed Movement speed of the robot.
+     * @param parent Parent object.
+     */
+    explicit Robot(
+        QPoint position,
+        qreal angle,
+        qreal speed,
         QGraphicsItem *parent = nullptr
     );
 
@@ -67,6 +85,26 @@ public:
     qreal speed();
 
 protected:
+    /**
+     * @brief Sets the angle and speed so that it matches the given step.
+     */
+    void set_step(QPointF step);
+    /**
+     * @brief Sets the orientation of the robot.
+     * @param angle Angle in radans.
+     */
+    void set_angle(qreal angle);
+    /**
+     * @brief Sets the orientation of the robot.
+     * @param angle Takes the mod of the vector.
+     */
+    void set_angle(QPointF angle);
+    /**
+     * @brief Sets the robot movement speed.
+     * @param speed Speed of the robot in pixels per second.
+     */
+    void set_speed(qreal speed);
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -75,16 +113,17 @@ protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
-    qreal angle;
-    qreal mspeed;
-
 private:
     void hover_mouse();
     void move_by(QPointF delta);
     void move_to(QPointF pos);
 
+    qreal angle;
+    qreal mspeed;
+
     bool grabbed;
     QPointF last_move_vec;
+    QGraphicsEllipseItem *eye;
 };
 
 }
