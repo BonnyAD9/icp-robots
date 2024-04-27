@@ -174,6 +174,7 @@ void Robot::move_to(QPointF point) {
     rec.moveTopLeft(point);
     setRect(rec);
 
+    // ensure that the eye of the robot is updated
     set_angle(angle);
 }
 
