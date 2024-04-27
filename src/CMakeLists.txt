@@ -22,6 +22,8 @@ qt_add_executable(icp-robots
     room.hpp
     robot.cpp
     robot.hpp
+    auto_robot.cpp
+    auto_robot.hpp
 )
 
 # TODO: REMOVE SANITIZE BEFORE SUBMIT

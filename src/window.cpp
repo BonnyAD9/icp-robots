@@ -6,6 +6,7 @@
 #include <QResizeEvent>
 
 #include "obstacle.hpp"
+#include "auto_robot.hpp"
 
 namespace icp {
 
@@ -43,9 +44,9 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         new Obstacle(QRectF(100, 300, 60, 60))
     ));
 
-    room->add_robot(unique_ptr<Robot>(new Robot(QPoint(200, 100))));
+    room->add_robot(unique_ptr<Robot>(new AutoRobot(QPoint(200, 100))));
 
-    room->add_robot(unique_ptr<Robot>(new Robot(QPoint(200, 200), QPoint(0, 0))));
+    room->add_robot(unique_ptr<Robot>(new Robot(QPoint(200, 200), 0, 0)));
 }
 
 void Window::resizeEvent(QResizeEvent *event) {

@@ -31,10 +31,13 @@ bool in_circle(qreal radius, QPointF center, QPointF point) {
     return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius;
 }
 
+qreal cross(QPointF a, QPointF b) {
+    return a.x() * b.y() - a.y() * b.x();
+}
+
 QPointF line_intersection(QPointF p1, QPointF d1, QPointF p2, QPointF d2) {
-    auto x = p1.x() + d1.x() * (p1.x() - p2.x()) / (d2.x() - d1.x());
-    auto y = p1.y() + d1.y() * (p1.y() - p2.y()) / (d2.y() - d1.y());
-    return QPointF(x, y);
+    auto u = cross(p2 - p1, d1) / cross(d1, d2);
+    return p2 + u * d2;
 }
 
 qreal segment_distance(QPointF p, QPointF d, QPointF a, QPointF b) {

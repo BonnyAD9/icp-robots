@@ -44,6 +44,32 @@ Robot::Robot(QPoint position, QPointF step, QGraphicsItem *parent) :
     set_step(step);
 }
 
+Robot::Robot(
+    QPoint position,
+    qreal angle,
+    qreal speed,
+    QGraphicsItem *parent
+) :
+    QGraphicsEllipseItem(
+        QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
+    ),
+    grabbed(false),
+    last_move_vec(0, 0)
+{
+    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+    setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
+    setAcceptHoverEvents(true);
+
+    eye = new QGraphicsEllipseItem(
+        QRectF(0, 0, BORDER_THICKNESS, BORDER_THICKNESS),
+        this
+    );
+    eye->setBrush(QBrush(QColor(0xff, 0xff, 0xff)));
+    eye->setPen(QPen(QColor(0, 0, 0, 0)));
+    set_angle(angle);
+    set_speed(speed);
+}
+
 void Robot::move(qreal delta, qreal distance) {
     last_move_vec = step() * delta;
     move_by(last_move_vec);

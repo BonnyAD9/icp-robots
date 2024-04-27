@@ -1,5 +1,9 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
+#include <cmath>
+
 #include <QGraphicsEllipseItem>
 
 namespace icp {
@@ -18,6 +22,13 @@ public:
     explicit Robot(
         QPoint position,
         QPointF step = QPointF(0, 20), // pixels per second
+        QGraphicsItem *parent = nullptr
+    );
+
+    explicit Robot(
+        QPoint position,
+        qreal angle,
+        qreal speed,
         QGraphicsItem *parent = nullptr
     );
 
