@@ -1,11 +1,15 @@
 #include "robot.hpp"
 
+#include <cmath>
+
 #include <QBrush>
 #include <QPen>
 #include <QGraphicsSceneHoverEvent>
 #include <QCursor>
 
 namespace icp {
+
+using namespace std;
 
 /**
  * @brief Diameter of the robot.
@@ -24,8 +28,9 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
     QGraphicsEllipseItem(
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
+    angle(atan2(speed.y(), speed.x())),
+    mspeed(sqrt(speed.x() * speed.x() + speed.y() * speed.y())),
     grabbed(false),
-    speed(speed),
     last_move_vec(0, 0)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
@@ -33,8 +38,8 @@ Robot::Robot(QPoint position, QPointF speed, QGraphicsItem *parent) :
     setAcceptHoverEvents(true);
 }
 
-void Robot::move(qreal delta) {
-    last_move_vec = speed * delta;
+void Robot::move(qreal delta, qreal distance) {
+    last_move_vec = step() * delta;
     move_by(last_move_vec);
 }
 
@@ -50,6 +55,22 @@ QRectF Robot::hitbox() const {
 void Robot::set_hitbox(QRectF hitbox) {
     constexpr qreal ADJ = BORDER_THICKNESS / 2;
     move_to(hitbox.topLeft() + QPointF(ADJ, ADJ));
+}
+
+QPointF Robot::step() {
+    return orientation_vec() * mspeed;
+}
+
+qreal Robot::orientation() {
+    return angle;
+}
+
+QPointF Robot::orientation_vec() {
+    return QPointF(cos(angle), sin(angle));
+}
+
+qreal Robot::speed() {
+    return mspeed;
 }
 
 //---------------------------------------------------------------------------//

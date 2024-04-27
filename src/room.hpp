@@ -42,6 +42,7 @@ private:
     void obstacle_collision(Robot *rob, Obstacle *obs);
     void robot_collision(Robot *r1, Robot *r2);
     void corner_collision(Robot *rob, QPointF p);
+    qreal obstacle_distance(Robot *rob);
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;

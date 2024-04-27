@@ -25,8 +25,10 @@ public:
      * @brief Moves the robot. The robot must also support 'unmove' of the one
      * last move when delta is negative.
      * @param delta Elapsed time in seconds since last tick.
+     * @param distance Distance to the closest obstacle in the direction of the
+     * robot.
      */
-    void move(qreal delta);
+    virtual void move(qreal delta, qreal distance);
     /**
      * @brief Gets the position change from the last move.
      */
@@ -47,6 +49,23 @@ public:
      */
     void set_hitbox(QRectF hitbox);
 
+    /**
+     * @brief Gets the movement speed and orientation.
+     */
+    QPointF step();
+    /**
+     * @brief Gets the angle the robot is facing.
+     */
+    qreal orientation();
+    /**
+     * @brief Gets the unit vector of the orientation
+     */
+    QPointF orientation_vec();
+    /**
+     * @brief Gets the movement speed.
+     */
+    qreal speed();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -56,13 +75,15 @@ protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
+    qreal angle;
+    qreal mspeed;
+
 private:
     void hover_mouse();
     void move_by(QPointF delta);
     void move_to(QPointF pos);
 
     bool grabbed;
-    QPointF speed;
     QPointF last_move_vec;
 };
 

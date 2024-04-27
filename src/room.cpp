@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <cmath>
+#include <algorithm>
 
 #include <QPointer>
 #include <QTimerEvent>
@@ -28,6 +29,37 @@ bool in_range(qreal val, qreal start, qreal end) {
 bool in_circle(qreal radius, QPointF center, QPointF point) {
     auto dist = center - point;
     return dist.x() * dist.x() + dist.y() * dist.y() < radius * radius;
+}
+
+QPointF line_intersection(QPointF p1, QPointF d1, QPointF p2, QPointF d2) {
+    auto x = p1.x() + d1.x() * (p1.x() - p2.x()) / (d2.x() - d1.x());
+    auto y = p1.y() + d1.y() * (p1.y() - p2.y()) / (d2.y() - d1.y());
+    return QPointF(x, y);
+}
+
+qreal segment_distance(QPointF p, QPointF d, QPointF a, QPointF b) {
+    auto is = line_intersection(p, d, a, a - b);
+    if (isnan(is.x())
+        || isnan(is.y())
+        || (!in_range(is.x(), a.x(), b.x()) && !in_range(is.y(), a.y(), b.y()))
+    ) {
+        return Q_INFINITY;
+    }
+    auto v = is - p;
+    if (QPointF::dotProduct(d, v) < 0) {
+        return Q_INFINITY;
+    }
+
+    return sqrt(v.x() * v.x() + v.y() * v.y());
+}
+
+qreal rect_distance(QPointF p, QPointF d, QRectF r) {
+    return min({
+        segment_distance(p, d, r.topLeft(), r.topRight()),
+        segment_distance(p, d, r.topRight(), r.bottomRight()),
+        segment_distance(p, d, r.bottomLeft(), r.bottomRight()),
+        segment_distance(p, d, r.topLeft(), r.bottomLeft())
+    });
 }
 
 //---------------------------------------------------------------------------//
@@ -99,7 +131,7 @@ void Room::tick(qreal delta) {
 void Room::move_robots(qreal delta) {
     for (auto r : robots) {
         if (!r->is_grabbed()) {
-            r->move(delta);
+            r->move(delta, obstacle_distance(r));
         }
     }
 }
@@ -219,6 +251,22 @@ void Room::corner_collision(Robot *rob, QPointF p) {
 
     box.moveTopLeft(box.topLeft() + mv);
     rob->set_hitbox(box);
+}
+
+qreal Room::obstacle_distance(Robot *rob) {
+    auto r = rob->hitbox();
+    auto c = (r.topLeft() + r.bottomRight()) / 2;
+    auto d = rob->orientation_vec();
+
+    qreal res = rect_distance(c, d, QRectF(0, 0, width(), height()));
+
+    for (auto o : obstacles) {
+        if (!o->is_grabbed()) {
+            res = min(res, rect_distance(c, d, o->hitbox()));
+        }
+    }
+
+    return clamp(res - r.width() / 2, 0., Q_INFINITY);
 }
 
 } // namespace icp
