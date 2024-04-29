@@ -36,7 +36,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu = new Menu(this);
     menu->setGeometry(0, 0, 100, 600);
 
-    sim_controls = new SimControls(QRectF(0, 600 - 40, 800, 40), this);
+    sim_controls = new SimControls(QRect(0, 600 - 40, 800, 40), this);
 
     // test code
     room->add_obstacle(unique_ptr<Obstacle>(
@@ -56,7 +56,7 @@ void Window::resizeEvent(QResizeEvent *event) {
     room_view->resize(QSize(size.width(), size.height() - 40));
     room->setSceneRect(0, 0, size.width(), size.height() - 40);
     menu->resize(menu->width(), size.height());
-    sim_controls->relayout(QRectF(0, size.height() - 40, size.width(), 40));
+    sim_controls->relayout(QRect(0, size.height() - 40, size.width(), 40));
 }
 
 void Window::handleMenuBtnClick() {

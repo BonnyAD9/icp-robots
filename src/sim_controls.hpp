@@ -8,9 +8,9 @@ namespace icp {
 
 class SimControls : public QWidget {
 public:
-    SimControls(QRectF rect, QWidget *parent = nullptr);
+    SimControls(QRect rect, QWidget *parent = nullptr);
 
-    void relayout(QRectF rect);
+    void relayout(QRect rect);
 
 private:
     QPointer<QPushButton> play_pause;
