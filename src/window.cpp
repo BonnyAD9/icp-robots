@@ -38,6 +38,13 @@ Window::Window(QWidget *parent) : QWidget(parent) {
 
     sim_controls = new SimControls(QRect(0, 600 - 40, 800, 40), this);
 
+    connect(
+        sim_controls,
+        SIGNAL(run_simulation(bool)),
+        room,
+        SLOT(run_simulation(bool))
+    );
+
     // test code
     room->add_obstacle(unique_ptr<Obstacle>(
         new Obstacle(QRectF(100, 200, 60, 60))

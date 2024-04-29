@@ -14,6 +14,8 @@ namespace icp {
  * @brief Room that can contain robots and obstacles.
  */
 class Room : public QGraphicsScene {
+    Q_OBJECT
+
 public:
     /**
      * @brief Creates a new room.
@@ -32,6 +34,9 @@ public:
      */
     void add_robot(std::unique_ptr<Robot> robot);
 
+public slots:
+    void run_simulation(bool play);
+
 protected:
     void timerEvent(QTimerEvent *event) override;
 
@@ -46,6 +51,8 @@ private:
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
+
+    int timer;
 };
 
 } // namespace icp

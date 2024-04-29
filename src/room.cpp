@@ -117,7 +117,7 @@ qreal rect_distance(QPointF p, QPointF d, QRectF r) {
 
 Room::Room(QObject *parent) : QGraphicsScene(parent), obstacles() {
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
-    startTimer(TICK_LEN, Qt::PreciseTimer);
+    timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
 
 void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
@@ -130,6 +130,17 @@ void Room::add_robot(unique_ptr<Robot> robot) {
     Robot *rob = robot.release();
     addItem(rob);
     robots.push_back(rob);
+}
+
+//---------------------------------------------------------------------------//
+//                               PUBLIC SLOTS                                //
+//---------------------------------------------------------------------------//
+void Room::run_simulation(bool play) {
+    if (play) {
+        timer = startTimer(TICK_LEN, Qt::PreciseTimer);
+    } else {
+        killTimer(timer);
+    }
 }
 
 //---------------------------------------------------------------------------//
