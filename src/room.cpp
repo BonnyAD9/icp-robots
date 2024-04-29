@@ -126,9 +126,11 @@ Room::Room(QObject *parent) :
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
 
-void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
+void Room::add_obstacle(unique_ptr<Obstacle> obstacle, bool drag) {
     Obstacle *obst = obstacle.release();
     addItem(obst);
+    if (drag)
+        obst->start_drag();
     obstacles.push_back(obst);
 }
 
@@ -188,7 +190,10 @@ void Room::change_robot(Robot *old, Robot *replace) {
 }
 
 void Room::add_obstacle_slot(Obstacle *obstacle) {
-    add_obstacle(unique_ptr<Obstacle>(obstacle));
+    // add_obstacle(unique_ptr<Obstacle>(obstacle));
+    addItem(obstacle);
+    obstacle->start_drag();
+    obstacles.push_back(obstacle);
 }
 
 void Room::add_robot_slot(Robot *robot) {

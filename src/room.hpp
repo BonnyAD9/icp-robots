@@ -28,7 +28,7 @@ public:
      * @brief Adds obstacle to the room.
      * @param obstacle Obstacle to add to the room.
      */
-    void add_obstacle(std::unique_ptr<Obstacle> obstacle);
+    void add_obstacle(std::unique_ptr<Obstacle> obstacle, bool drag = false);
     /**
      * @brief Adds robot to the room.
      * @param robot Robot to add to the room.

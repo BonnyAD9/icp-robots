@@ -10,6 +10,8 @@ class Obstacle : public QGraphicsRectItem {
 public:
     explicit Obstacle(QRectF hitbox, QGraphicsItem *parent = nullptr);
 
+    void start_drag();
+
     enum class State : int {
         None = 0x0,
         Dragging = 0x1,

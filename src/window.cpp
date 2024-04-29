@@ -38,7 +38,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         menu_button, &QPushButton::clicked, this, &Window::handleMenuBtnClick
     );
 
-    menu = new Menu(this);
+    menu = new Menu(room, this);
     menu->setGeometry(0, 0, 100, 600);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);

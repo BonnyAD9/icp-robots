@@ -80,6 +80,12 @@ bool Obstacle::is_grabbed() const {
     return state == State::Dragging;
 }
 
+void Obstacle::start_drag() {
+    state = State::Dragging;
+    setCursor(Qt::ClosedHandCursor);
+    grabMouse();
+}
+
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
         if (state == State::None) {
