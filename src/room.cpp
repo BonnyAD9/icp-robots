@@ -115,7 +115,7 @@ qreal rect_distance(QPointF p, QPointF d, QRectF r) {
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Room::Room(QObject *parent) : QGraphicsScene(parent), obstacles() {
+Room::Room(QObject *parent) : QGraphicsScene(parent), obstacles(), timer(0) {
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
@@ -137,9 +137,12 @@ void Room::add_robot(unique_ptr<Robot> robot) {
 //---------------------------------------------------------------------------//
 void Room::run_simulation(bool play) {
     if (play) {
-        timer = startTimer(TICK_LEN, Qt::PreciseTimer);
+        if (!timer) {
+            timer = startTimer(TICK_LEN, Qt::PreciseTimer);
+        }
     } else {
         killTimer(timer);
+        timer = 0;
     }
 }
 

@@ -35,6 +35,11 @@ public:
     void add_robot(std::unique_ptr<Robot> robot);
 
 public slots:
+    /**
+     * @brief Play/pause the simulation.
+     *
+     * @param play
+     */
     void run_simulation(bool play);
 
 protected:

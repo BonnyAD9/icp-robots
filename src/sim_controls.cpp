@@ -2,6 +2,10 @@
 
 namespace icp {
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 SimControls::SimControls(QRect rect, QWidget *parent)
     : QWidget(parent),
     is_playing(true)
@@ -21,6 +25,10 @@ void SimControls::relayout(QRect rect) {
     play_pause->setGeometry(rect.width() - 65, 5, 60, 30);
     setGeometry(rect);
 }
+
+//---------------------------------------------------------------------------//
+//                              PRIVATE SLOTS                                //
+//---------------------------------------------------------------------------//
 
 void SimControls::handle_play_pause(bool checked) {
     is_playing = !is_playing;
