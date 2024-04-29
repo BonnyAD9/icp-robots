@@ -157,6 +157,23 @@ void Room::run_simulation(bool play) {
     }
 }
 
+void Room::remove_robot(Robot *r) {
+    unique_ptr<Robot> rob = unique_ptr<Robot>(r);
+    if (r == selected) {
+        select_robot(NULL);
+    }
+
+    auto p = find(robots.begin(), robots.end(), r);
+    if (p == robots.end()) {
+        return;
+    }
+
+    removeItem(r);
+    
+    swap(*p, *robots.rbegin());
+    robots.pop_back();
+}
+
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//

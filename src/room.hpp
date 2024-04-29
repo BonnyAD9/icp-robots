@@ -44,6 +44,7 @@ public slots:
      * @param play
      */
     void run_simulation(bool play);
+    void remove_robot(Robot *r);
 
 protected:
     void timerEvent(QTimerEvent *event) override;

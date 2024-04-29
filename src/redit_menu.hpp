@@ -16,15 +16,20 @@ public:
 
     void relayout(QRect rect);
 
+signals:
+    void remove_robot(Robot *robot);
+
 public slots:
     void select_robot(Robot *robot);
 
 private slots:
     void handle_deselect(bool);
+    void handle_remove(bool);
 
 private:
     Robot *robot;
 
+    QPointer<QPushButton> remove;
     QPointer<QPushButton> deselect;
 };
 
