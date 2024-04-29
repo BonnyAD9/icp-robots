@@ -28,6 +28,12 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     );
 
     redit_menu = new ReditMenu(QRect(0, 0, 600, 40), this);
+    connect(
+        room,
+        &Room::new_selection,
+        redit_menu,
+        &ReditMenu::select_robot
+    );
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 45, 54, 30);
@@ -39,12 +45,11 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu->setGeometry(0, 0, 100, 600);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, 800, 40), this);
-
     connect(
         sim_controls,
-        SIGNAL(run_simulation(bool)),
+        &SimControls::run_simulation,
         room,
-        SLOT(run_simulation(bool))
+        &Room::run_simulation
     );
 
     // test code

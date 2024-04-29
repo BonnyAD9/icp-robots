@@ -34,6 +34,9 @@ public:
      */
     void add_robot(std::unique_ptr<Robot> robot);
 
+signals:
+    void new_selection(Robot *r);
+
 public slots:
     /**
      * @brief Play/pause the simulation.
@@ -42,11 +45,11 @@ public slots:
      */
     void run_simulation(bool play);
 
-private slots:
-    void select_robot(Robot *r);
-
 protected:
     void timerEvent(QTimerEvent *event) override;
+
+private slots:
+    void select_robot(Robot *r);
 
 private:
     void tick(qreal delta);

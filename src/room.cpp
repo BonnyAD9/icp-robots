@@ -137,9 +137,9 @@ void Room::add_robot(unique_ptr<Robot> robot) {
     robots.push_back(rob);
     connect(
         rob,
-        SIGNAL(select(Robot *)),
+        &Robot::select,
         this,
-        SLOT(select_robot(Robot *))
+        &Room::select_robot
     );
 }
 
@@ -174,7 +174,9 @@ void Room::select_robot(Robot *r) {
         QSignalBlocker block(selected);
         selected->set_selected(false);
     }
+
     selected = r;
+    emit new_selection(selected);
 }
 
 //---------------------------------------------------------------------------//
