@@ -98,13 +98,9 @@ void Robot::set_selected(bool val) {
         setPen(QPen(QColor(0xff, 0xff, 0x55), BORDER_THICKNESS));
         emit select(this);
     } else {
-        unselect();
+        setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
         emit select(nullptr);
     }
-}
-
-void Robot::unselect() {
-    setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
 }
 
 //---------------------------------------------------------------------------//

@@ -171,7 +171,8 @@ void Room::timerEvent(QTimerEvent *event) {
 
 void Room::select_robot(Robot *r) {
     if (selected && selected != r) {
-        selected->unselect();
+        QSignalBlocker block(selected);
+        selected->set_selected(false);
     }
     selected = r;
 }

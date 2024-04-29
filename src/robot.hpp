@@ -88,8 +88,6 @@ public:
 
     void set_selected(bool val = true);
 
-    void unselect();
-
 signals:
     void select(Robot *sender);
 
