@@ -6,6 +6,7 @@
 
 #include "menu.hpp"
 #include "room.hpp"
+#include "sim_controls.hpp"
 
 namespace icp {
 
@@ -25,6 +26,7 @@ private:
     QPointer<Menu> menu;
     QPointer<QGraphicsView> room_view;
     QPointer<Room> room;
+    QPointer<SimControls> sim_controls;
 };
 
 } // namespace icp
