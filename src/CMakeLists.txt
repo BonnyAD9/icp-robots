@@ -26,6 +26,8 @@ qt_add_executable(icp-robots
     auto_robot.hpp
     sim_controls.cpp
     sim_controls.hpp
+    redit_menu.cpp
+    redit_menu.hpp
 )
 
 # TODO: REMOVE SANITIZE BEFORE SUBMIT
