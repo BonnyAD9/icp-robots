@@ -30,6 +30,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     redit_menu = new ReditMenu(QRect(0, 0, 600, 40), this);
     connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
     connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
+    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 45, 54, 30);

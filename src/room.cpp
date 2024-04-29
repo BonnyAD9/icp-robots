@@ -169,9 +169,21 @@ void Room::remove_robot(Robot *r) {
     }
 
     removeItem(r);
-    
+
     swap(*p, *robots.rbegin());
     robots.pop_back();
+}
+
+void Room::change_robot(Robot *old, Robot *replace) {
+    auto rep = unique_ptr<Robot>(replace);
+    auto sel = selected;
+
+    remove_robot(old);
+    add_robot(std::move(rep));
+
+    if (old == sel) {
+        replace->set_selected(true);
+    }
 }
 
 //---------------------------------------------------------------------------//

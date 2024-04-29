@@ -22,9 +22,9 @@ public:
      * @param parent The parent graphics item.
      */
     explicit Robot(
-        QPoint position,
+        QPointF position,
         QPointF step = QPointF(0, 20),
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
 
     /**
@@ -35,11 +35,13 @@ public:
      * @param parent Parent object.
      */
     explicit Robot(
-        QPoint position,
+        QPointF position,
         qreal angle,
         qreal speed,
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
+
+    explicit Robot(Robot *other);
 
     /**
      * @brief Moves the robot. The robot must also support 'unmove' of the one

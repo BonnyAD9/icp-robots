@@ -11,12 +11,12 @@ using namespace std;
 //---------------------------------------------------------------------------//
 
 AutoRobot::AutoRobot(
-    QPoint position,
+    QPointF position,
     QPointF step,
     qreal elide_dist,
     qreal elide_rot,
     qreal rot_speed,
-    QGraphicsItem *parent
+    QObject *parent
 ) : AutoRobot(
     position,
     atan2(step.y(), step.x()),
@@ -28,13 +28,13 @@ AutoRobot::AutoRobot(
 ) {}
 
 AutoRobot::AutoRobot(
-    QPoint position,
+    QPointF position,
     qreal angle,
     qreal speed,
     qreal elide_dist,
     qreal elide_rot,
     qreal rot_speed,
-    QGraphicsItem *parent
+    QObject *parent
 ) : Robot(position, angle, speed, parent),
     sspeed(speed),
     rot_remain(0),
@@ -43,6 +43,21 @@ AutoRobot::AutoRobot(
     rot_speed(rot_speed)
 {
     setBrush(QBrush(QColor(0x55, 0x55, 0xcc)));
+}
+
+AutoRobot::AutoRobot(Robot *r) :
+    Robot(r),
+    elide_dist(20),
+    elide_rot(M_PI / M_E),
+    rot_speed(M_PI / 4)
+{
+    setBrush(QBrush(QColor(0x55, 0x55, 0xcc)));
+    auto rob = dynamic_cast<AutoRobot *>(r);
+    if (rob) {
+        elide_dist = rob->elide_dist;
+        elide_rot = rob->elide_rot;
+        rot_speed = rob->rot_speed;
+    }
 }
 
 void AutoRobot::move(qreal delta, qreal distance) {

@@ -3,6 +3,8 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QPointer>
+#include <QComboBox>
+#include <QLabel>
 
 #include "robot.hpp"
 
@@ -18,6 +20,7 @@ public:
 
 signals:
     void remove_robot(Robot *robot);
+    void change_robot(Robot *old, Robot *replace);
 
 public slots:
     void select_robot(Robot *robot);
@@ -25,10 +28,15 @@ public slots:
 private slots:
     void handle_deselect(bool);
     void handle_remove(bool);
+    void handle_type_change(int idx);
 
 private:
+    int get_robot_type();
+
     Robot *robot;
 
+    QPointer<QLabel> robot_select_label;
+    QPointer<QComboBox> robot_select;
     QPointer<QPushButton> remove;
     QPointer<QPushButton> deselect;
 };

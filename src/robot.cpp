@@ -24,7 +24,7 @@ constexpr qreal BORDER_THICKNESS = 6;
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Robot::Robot(QPoint position, QPointF step, QGraphicsItem *parent) :
+Robot::Robot(QPointF position, QPointF step, QObject *parent) :
     Robot(
         position,
         atan2(step.y(), step.x()),
@@ -33,10 +33,10 @@ Robot::Robot(QPoint position, QPointF step, QGraphicsItem *parent) :
 ) {}
 
 Robot::Robot(
-    QPoint position,
+    QPointF position,
     qreal angle,
     qreal speed,
-    QGraphicsItem *parent
+    QObject *parent
 ) :
     QGraphicsEllipseItem(
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
@@ -57,6 +57,13 @@ Robot::Robot(
     set_angle(angle);
     set_speed(speed);
 }
+
+Robot::Robot(Robot *other) : Robot(
+    other->rect().topLeft(),
+    other->angle,
+    other->mspeed,
+    other->parent()
+) {}
 
 void Robot::move(qreal delta, qreal distance) {
     last_move_vec = step() * delta;

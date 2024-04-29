@@ -23,12 +23,12 @@ public:
      * @param parent The parent object.
      */
     explicit AutoRobot(
-        QPoint position,
+        QPointF position,
         QPointF step = QPoint(0, 20),
         qreal elide_dist = 20,
         qreal elide_rot = M_PI / M_E,
         qreal rot_speed = M_PI / 4,
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
 
     /**
@@ -43,14 +43,16 @@ public:
      * @param parent The parent object.
      */
     explicit AutoRobot(
-        QPoint position,
+        QPointF position,
         qreal angle,
         qreal speed,
         qreal elide_dist = 20,
-        qreal elide_rot = M_PI / 2,
+        qreal elide_rot = M_PI / M_E,
         qreal rot_speed = M_PI / 4, // angle per secod
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
+
+    explicit AutoRobot(Robot *r);
 
     /**
      * @brief Moves the robot.
