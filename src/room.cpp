@@ -115,7 +115,12 @@ qreal rect_distance(QPointF p, QPointF d, QRectF r) {
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Room::Room(QObject *parent) : QGraphicsScene(parent), obstacles(), timer(0) {
+Room::Room(QObject *parent) :
+    QGraphicsScene(parent),
+    obstacles(),
+    timer(0),
+    selected(nullptr)
+{
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
@@ -130,6 +135,12 @@ void Room::add_robot(unique_ptr<Robot> robot) {
     Robot *rob = robot.release();
     addItem(rob);
     robots.push_back(rob);
+    connect(
+        rob,
+        SIGNAL(select(Robot *)),
+        this,
+        SLOT(select_robot(Robot *))
+    );
 }
 
 //---------------------------------------------------------------------------//
@@ -152,6 +163,17 @@ void Room::run_simulation(bool play) {
 
 void Room::timerEvent(QTimerEvent *event) {
     tick(TICK_DELTA);
+}
+
+//---------------------------------------------------------------------------//
+//                              PRIVATE SLOTS                                //
+//---------------------------------------------------------------------------//
+
+void Room::select_robot(Robot *r) {
+    if (selected && selected != r) {
+        selected->unselect();
+    }
+    selected = r;
 }
 
 //---------------------------------------------------------------------------//

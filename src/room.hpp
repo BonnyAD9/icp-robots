@@ -42,6 +42,9 @@ public slots:
      */
     void run_simulation(bool play);
 
+private slots:
+    void select_robot(Robot *r);
+
 protected:
     void timerEvent(QTimerEvent *event) override;
 
@@ -56,6 +59,8 @@ private:
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
+
+    Robot *selected;
 
     int timer;
 };

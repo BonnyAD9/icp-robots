@@ -11,7 +11,9 @@ namespace icp {
 /**
  * @brief Represents a robot that can move and can be moved by the user.
  */
-class Robot : public QGraphicsEllipseItem {
+class Robot : public QObject, public QGraphicsEllipseItem {
+    Q_OBJECT
+
 public:
     /**
      * @brief Creates a new robot.
@@ -83,6 +85,13 @@ public:
      * @brief Gets the movement speed.
      */
     qreal speed();
+
+    void set_selected(bool val = true);
+
+    void unselect();
+
+signals:
+    void select(Robot *sender);
 
 protected:
     /**
