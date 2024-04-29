@@ -137,6 +137,8 @@ void Room::add_obstacle(unique_ptr<Obstacle> obstacle, bool drag) {
 void Room::add_robot(unique_ptr<Robot> robot, bool drag) {
     Robot *rob = robot.release();
     addItem(rob);
+    if (drag)
+        rob->start_drag();
     robots.push_back(rob);
     connect(
         rob,

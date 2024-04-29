@@ -136,6 +136,13 @@ void Robot::set_speed(qreal speed) {
     mspeed = speed;
 }
 
+
+void Robot::start_drag() {
+    grabbed = true;
+    setCursor(Qt::ClosedHandCursor);
+    grabMouse();
+}
+
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//

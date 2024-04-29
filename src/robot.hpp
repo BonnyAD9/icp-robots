@@ -114,6 +114,8 @@ signals:
     void select(Robot *sender);
     void angle_change(qreal angle);
 
+    void start_drag();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
