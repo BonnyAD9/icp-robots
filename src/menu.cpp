@@ -38,6 +38,36 @@ void ObstacleButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     // emit add_obstacle(new Obstacle(boundingRect()));
 }
 
+/**
+ * @brief Diameter of the robot.
+ */
+constexpr qreal ROBOT_D = 50;
+
+RobotButton::RobotButton(
+    QPoint pos,
+    QPointer<Room> room,
+    QWidget *menu,
+    QGraphicsItem *parent
+)
+    : QGraphicsEllipseItem(QRectF(pos, QSizeF(ROBOT_D, ROBOT_D)))
+{
+    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+    setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
+    this->room = room;
+    this->menu = menu;
+}
+
+void RobotButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    auto pos = event->scenePos();
+
+    menu->setVisible(false);
+    room->add_robot(unique_ptr<Robot>(
+        new Robot(QPoint(pos.x(), pos.y()))),
+        true
+    );
+    // emit add_obstacle(new Obstacle(boundingRect()));
+}
+
 Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
     setVisible(false);
 
@@ -57,6 +87,9 @@ Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
 
     obstacle_btn = new ObstacleButton(QRectF(0, 0, 60, 60), room, this);
     button_scene->addItem(obstacle_btn);
+
+    robot_btn = new RobotButton(QPoint(5, 100), room, this);
+    button_scene->addItem(robot_btn);
 
     button_view = new QGraphicsView(button_scene, this);
     button_view->setGeometry(5, 40, 90, 300);

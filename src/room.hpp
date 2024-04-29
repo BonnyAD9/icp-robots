@@ -33,7 +33,7 @@ public:
      * @brief Adds robot to the room.
      * @param robot Robot to add to the room.
      */
-    void add_robot(std::unique_ptr<Robot> robot);
+    void add_robot(std::unique_ptr<Robot> robot, bool drag = false);
 
 signals:
     void new_selection(Robot *r);

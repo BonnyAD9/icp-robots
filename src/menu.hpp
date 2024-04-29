@@ -6,6 +6,7 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
 #include <QGraphicsView>
 #include <QWidget>
 
@@ -19,6 +20,23 @@ class ObstacleButton : public QGraphicsRectItem {
 public:
     explicit ObstacleButton(
         QRectF hitbox,
+        QPointer<Room> room,
+        QWidget *menu,
+        QGraphicsItem *parent = nullptr
+    );
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+private:
+    QPointer<Room> room;
+    QWidget *menu;
+};
+
+class RobotButton : public QGraphicsEllipseItem {
+public:
+    explicit RobotButton(
+        QPoint pos,
         QPointer<Room> room,
         QWidget *menu,
         QGraphicsItem *parent = nullptr
@@ -54,7 +72,7 @@ private:
     QPointer<QGraphicsScene> button_scene;
     QPointer<QGraphicsView> button_view;
     ObstacleButton *obstacle_btn;
-    QPointer<QPushButton> robot_btn;
+    RobotButton *robot_btn;
 };
 
 } // namespace icp
