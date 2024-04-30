@@ -110,6 +110,8 @@ public:
      */
     virtual void set_speed(qreal speed);
 
+    void start_drag();
+
 signals:
     void select(Robot *sender);
     void angle_change(qreal angle);

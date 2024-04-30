@@ -11,9 +11,16 @@
 
 namespace icp {
 
+/**
+ * @brief Class representing window
+ */
 class Window : public QWidget {
     Q_OBJECT
 public:
+    /**
+     * @brief Creates new window
+     * @param parent Parent widget
+     */
     explicit Window(QWidget *parent = nullptr);
 
 protected:

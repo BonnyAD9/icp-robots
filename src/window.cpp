@@ -12,6 +12,10 @@ namespace icp {
 
 using namespace std;
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 Window::Window(QWidget *parent) : QWidget(parent) {
     setGeometry(0, 0, 900, 600);
 
@@ -39,7 +43,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     );
 
     menu = new Menu(this);
-    menu->setGeometry(0, 0, 100, 600);
+    menu->setGeometry(0, 40, 800, 600 - 40 * 2);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);
     connect(
@@ -47,6 +51,20 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         &SimControls::run_simulation,
         room,
         &Room::run_simulation
+    );
+
+    connect(
+        menu,
+        SIGNAL(add_obstacle(Obstacle *)),
+        room,
+        SLOT(add_obstacle_slot(Obstacle *))
+    );
+
+    connect(
+        menu,
+        SIGNAL(add_robot(Robot *)),
+        room,
+        SLOT(add_robot_slot(Robot *))
     );
 
     // test code
@@ -62,6 +80,10 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room->add_robot(unique_ptr<Robot>(new Robot(QPoint(201, 200), 0, 0)));
 }
 
+//---------------------------------------------------------------------------//
+//                                PROTECTED                                  //
+//---------------------------------------------------------------------------//
+
 void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
     room_view->resize(QSize(size.width(), size.height() - 40 * 2));
@@ -70,6 +92,10 @@ void Window::resizeEvent(QResizeEvent *event) {
     sim_controls->relayout(QRect(0, size.height() - 40, size.width(), 40));
     redit_menu->relayout(QRect(0, 0, size.width(), 40));
 }
+
+//---------------------------------------------------------------------------//
+//                               PRIVATE SLOTS                               //
+//---------------------------------------------------------------------------//
 
 void Window::handleMenuBtnClick() {
     menu->show();
