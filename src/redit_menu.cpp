@@ -27,6 +27,8 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     angle = new QLineEdit(this);
     distance_label = new QLabel("d. dist.:", this);
     distance = new QLineEdit(this);
+    rspeed_label = new QLabel("r. speed:", this);
+    rspeed = new QLineEdit(this);
     remove = new QPushButton("remove", this);
     deselect = new QPushButton("deselect", this);
 
@@ -38,6 +40,8 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     angle->hide();
     distance_label->hide();
     distance->hide();
+    rspeed_label->hide();
+    rspeed->hide();
     deselect->hide();
     remove->hide();
 
@@ -47,6 +51,9 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     );
     angle->setValidator(new QDoubleValidator(-360, 360, 2));
     distance->setValidator(
+        new QDoubleValidator(0, numeric_limits<double>::max(), 2)
+    );
+    rspeed->setValidator(
         new QDoubleValidator(0, numeric_limits<double>::max(), 2)
     );
 
@@ -75,6 +82,12 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
         &ReditMenu::distance_editing_finished
     );
     connect(
+        rspeed,
+        &QLineEdit::editingFinished,
+        this,
+        &ReditMenu::rspeed_editing_finished
+    );
+    connect(
         deselect,
         &QPushButton::clicked,
         this,
@@ -100,6 +113,8 @@ void ReditMenu::relayout(QRect rect) {
     angle->setGeometry(QRect(280, 5, 60, 30));
     distance_label->setGeometry(QRect(345, 5, 55, 30));
     distance->setGeometry(QRect(400, 5, 60, 30));
+    rspeed_label->setGeometry(QRect(465, 5, 65, 30));
+    rspeed->setGeometry(QRect(520, 5, 60, 30));
     remove->setGeometry(QRect(rect.width() - 65, 5, 60, 30));
     deselect->setGeometry(QRect(rect.width() - 130, 5, 60, 30));
 }
@@ -127,6 +142,8 @@ void ReditMenu::select_robot(Robot *robot) {
         angle->hide();
         distance_label->hide();
         distance->hide();
+        rspeed_label->hide();
+        rspeed->hide();
         deselect->hide();
         remove->hide();
     }
@@ -141,8 +158,11 @@ void ReditMenu::select_robot(Robot *robot) {
     if (arob) {
         distance_label->show();
         distance->show();
+        rspeed_label->show();
+        rspeed->show();
 
         distance->setText(QString::number(arob->edist()));
+        rspeed->setText(QString::number(arob->rspeed() / M_PI * 180));
     }
 }
 
@@ -191,6 +211,13 @@ void ReditMenu::distance_editing_finished() {
     auto arob = dynamic_cast<AutoRobot *>(robot);
     if (arob) {
         arob->set_edist(distance->text().toDouble());
+    }
+}
+
+void ReditMenu::rspeed_editing_finished() {
+    auto arob = dynamic_cast<AutoRobot *>(robot);
+    if (arob) {
+        arob->set_rspeed(rspeed->text().toDouble() / 180 * M_PI);
     }
 }
 
