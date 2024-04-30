@@ -148,6 +148,19 @@ void ReditMenu::relayout(QRect rect) {
 //---------------------------------------------------------------------------//
 
 void ReditMenu::select_robot(Robot *robot) {
+    if (this->robot == robot) {
+        return;
+    }
+
+    if (this->robot) {
+        disconnect(
+            this->robot,
+            &Robot::angle_change,
+            this,
+            &ReditMenu::robot_angle_change
+        );
+    }
+
     this->robot = robot;
     if (robot) {
         robot_select_label->show();
@@ -182,13 +195,20 @@ void ReditMenu::select_robot(Robot *robot) {
         return;
     }
 
+    connect(
+        robot,
+        &Robot::angle_change,
+        this,
+        &ReditMenu::robot_angle_change
+    );
+
     robot_select->setCurrentIndex(get_robot_type());
-    speed->setText(QString::number(robot->speed()));
+    speed->setText(QString::number(robot->speed(), 'f', 2));
     auto num = dmod(-robot->orientation() / M_PI * 180, 360);
     if (num < -180) {
         num += 360;
     }
-    angle->setText(QString::number(num));
+    angle->setText(QString::number(num, 'f', 2));
 
     AutoRobot *arob = dynamic_cast<AutoRobot *>(robot);
     if (arob) {
@@ -199,9 +219,9 @@ void ReditMenu::select_robot(Robot *robot) {
         rdist_label->show();
         rdist->show();
 
-        distance->setText(QString::number(arob->edist()));
-        rspeed->setText(QString::number(arob->rspeed() / M_PI * 180));
-        rdist->setText(QString::number(-arob->rdist() / M_PI * 180));
+        distance->setText(QString::number(arob->edist(), 'f', 2));
+        rspeed->setText(QString::number(arob->rspeed() / M_PI * 180, 'f', 2));
+        rdist->setText(QString::number(-arob->rdist() / M_PI * 180, 'f', 2));
     }
     ControlRobot *crob = dynamic_cast<ControlRobot *>(robot);
     if (crob) {
@@ -275,6 +295,18 @@ void ReditMenu::rdist_editing_finished() {
     if (arob) {
         arob->set_rdist(-rdist->text().toDouble() / 180 * M_PI);
     }
+}
+
+void ReditMenu::robot_angle_change(qreal angle) {
+    if (this->angle->hasFocus()) {
+        return;
+    }
+
+    angle = dmod(-angle / M_PI * 180, 360);
+    if (angle < -180) {
+        angle += 360;
+    }
+    this->angle->setText(QString::number(angle, 'f', 2));
 }
 
 //---------------------------------------------------------------------------//

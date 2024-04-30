@@ -13,13 +13,13 @@ namespace icp {
 using namespace std;
 
 Window::Window(QWidget *parent) : QWidget(parent) {
-    setGeometry(0, 0, 800, 600);
+    setGeometry(0, 0, 900, 600);
 
     room = new Room();
-    room->setSceneRect(0, 40, 800, 600 - 40 * 2);
+    room->setSceneRect(0, 40, width(), 600 - 40 * 2);
 
     room_view = new QGraphicsView(room, this);
-    room_view->setGeometry(0, 40, 800, 600 - 40 * 2);
+    room_view->setGeometry(0, 40, width(), 600 - 40 * 2);
     room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setFrameStyle(QFrame::NoFrame);
@@ -27,7 +27,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform
     );
 
-    redit_menu = new ReditMenu(QRect(0, 0, 600, 40), this);
+    redit_menu = new ReditMenu(QRect(0, 0, width(), 40), this);
     connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
     connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
     connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
@@ -41,7 +41,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu = new Menu(this);
     menu->setGeometry(0, 0, 100, 600);
 
-    sim_controls = new SimControls(QRect(0, 600 - 40, 800, 40), this);
+    sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);
     connect(
         sim_controls,
         &SimControls::run_simulation,

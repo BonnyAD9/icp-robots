@@ -112,6 +112,7 @@ public:
 
 signals:
     void select(Robot *sender);
+    void angle_change(qreal angle);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

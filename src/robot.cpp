@@ -116,12 +116,16 @@ void Robot::set_step(QPointF step) {
 }
 
 void Robot::set_angle(qreal angle) {
+    auto em = this->angle != angle;
     this->angle = angle;
     auto e = eye->rect();
     e.moveCenter(
         rect().center() + orientation_vec() * (ROBOT_DIAMETER / 3)
     );
     eye->setRect(e);
+    if (em) {
+        emit angle_change(this->angle);
+    }
 }
 
 void Robot::set_angle(QPointF angle) {

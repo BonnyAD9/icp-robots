@@ -35,6 +35,7 @@ private slots:
     void distance_editing_finished();
     void rspeed_editing_finished();
     void rdist_editing_finished();
+    void robot_angle_change(qreal angle);
 
 private:
     int get_robot_type();
