@@ -30,12 +30,19 @@ public:
     explicit ObstacleButton(QRectF hitbox,QGraphicsItem *parent = nullptr);
 
 signals:
+    /**
+     * @brief Signal to add obstacle with given rectangle
+     * @param rec rectangle to create obstacle based on
+     */
     void add_obstacle(QRectF rec);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
     QPointF pos;
@@ -55,6 +62,10 @@ public:
     explicit RobotButton(QPoint pos, QGraphicsItem *parent = nullptr);
 
 signals:
+    /**
+     * @brief Signal to add obstacle with given rectangle
+     * @param rec rectangle to create obstacle based on
+     */
     void add_robot(QPointF point);
 
 protected:
@@ -62,10 +73,17 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 private:
     QPointF pos;
+    QGraphicsEllipseItem *eye;
 };
 
+/**
+ * @brief Custom menu for adding obstacles and robots
+ */
 class Menu : public QWidget {
     Q_OBJECT
 public:
@@ -76,11 +94,22 @@ public:
     explicit Menu(QWidget *parent = nullptr);
 
 signals:
+    /**
+     * @brief Signal to add given obstacle to room
+     * @param obstacle obstacle to add
+     */
     void add_obstacle(Obstacle *obstacle);
+
+    /**
+     * @brief Signal to add given robot to room
+     * @param robot robot to add
+     */
     void add_robot(Robot *robot);
 
 protected:
     void paintEvent(QPaintEvent *e) override;
+
+    void mousePressEvent(QMouseEvent *e) override;
 
 private slots:
     void handle_close_btn();

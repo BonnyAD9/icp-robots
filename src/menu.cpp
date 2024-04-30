@@ -2,6 +2,10 @@
 
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
+#include <QCursor>
+
+#include "auto_robot.hpp"
 
 namespace icp {
 
@@ -21,6 +25,7 @@ ObstacleButton::ObstacleButton(
         Qt::SquareCap,
         Qt::PenJoinStyle::SvgMiterJoin
     ));
+    setAcceptHoverEvents(true);
 }
 
 void ObstacleButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -47,6 +52,14 @@ void ObstacleButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
+void ObstacleButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    setCursor(Qt::OpenHandCursor);
+}
+
+void ObstacleButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    unsetCursor();
+}
+
 /**
  * @brief Diameter of the robot.
  */
@@ -58,9 +71,21 @@ RobotButton::RobotButton(
 ) : QGraphicsEllipseItem(QRectF(pos, QSizeF(ROBOT_D, ROBOT_D))),
     pos(pos)
 {
-    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+    setBrush(QBrush(QColor(0x55, 0x55, 0xcc)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
     setFlag(ItemIsMovable);
+
+    eye = new QGraphicsEllipseItem(
+        QRectF(0, 0, 6, 6),
+        this
+    );
+    eye->setBrush(QBrush(QColor(0xff, 0xff, 0xff)));
+    eye->setPen(QPen(QColor(0, 0, 0, 0)));
+    auto e = eye->rect();
+    e.moveCenter(
+        rect().center() + QPointF(0, 1) * (ROBOT_D / 3)
+    );
+    eye->setRect(e);
 }
 
 void RobotButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -85,6 +110,14 @@ void RobotButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         rec.moveTopLeft(pos);
         setRect(rec);
     }
+}
+
+void RobotButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    setCursor(Qt::OpenHandCursor);
+}
+
+void RobotButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    unsetCursor();
 }
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
@@ -132,6 +165,11 @@ void Menu::paintEvent(QPaintEvent *e) {
     painter.fillRect(QRect(0, 0, 100, 600 - 40 * 2), QColor(0x40, 0x40, 0x40));
 }
 
+void Menu::mousePressEvent(QMouseEvent *e) {
+    if (e->pos().x() > 100)
+        setVisible(false);
+}
+
 void Menu::handle_close_btn() {
     setVisible(false);
 }
@@ -143,7 +181,7 @@ void Menu::handle_obstacle_btn(QRectF rec) {
 
 void Menu::handle_robot_btn(QPointF point) {
     setVisible(false);
-    emit add_robot(new Robot(point));
+    emit add_robot(new AutoRobot(point));
 }
 
 } // namespace icp
