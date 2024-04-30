@@ -90,10 +90,6 @@ public:
 
     void set_selected(bool val = true);
 
-signals:
-    void select(Robot *sender);
-
-protected:
     /**
      * @brief Sets the angle and speed so that it matches the given step.
      */
@@ -114,6 +110,10 @@ protected:
      */
     void set_speed(qreal speed);
 
+signals:
+    void select(Robot *sender);
+
+protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;

@@ -110,10 +110,6 @@ void Robot::set_selected(bool val) {
     }
 }
 
-//---------------------------------------------------------------------------//
-//                                PROTECTED                                  //
-//---------------------------------------------------------------------------//
-
 void Robot::set_step(QPointF step) {
     set_angle(step);
     set_speed(sqrt(step.x() * step.x() + step.y() * step.y()));
@@ -135,6 +131,10 @@ void Robot::set_angle(QPointF angle) {
 void Robot::set_speed(qreal speed) {
     mspeed = speed;
 }
+
+//---------------------------------------------------------------------------//
+//                                PROTECTED                                  //
+//---------------------------------------------------------------------------//
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     set_selected();

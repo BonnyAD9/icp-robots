@@ -5,6 +5,7 @@
 #include <QPointer>
 #include <QComboBox>
 #include <QLabel>
+#include <QLineEdit>
 
 #include "robot.hpp"
 
@@ -29,6 +30,7 @@ private slots:
     void handle_deselect(bool);
     void handle_remove(bool);
     void handle_type_change(int idx);
+    void speed_editing_finished();
 
 private:
     int get_robot_type();
@@ -37,6 +39,8 @@ private:
 
     QPointer<QLabel> robot_select_label;
     QPointer<QComboBox> robot_select;
+    QPointer<QLabel> speed_label;
+    QPointer<QLineEdit> speed;
     QPointer<QPushButton> remove;
     QPointer<QPushButton> deselect;
 };

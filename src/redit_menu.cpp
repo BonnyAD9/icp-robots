@@ -1,8 +1,12 @@
 #include "redit_menu.hpp"
 
+#include <limits>
+
 #include "auto_robot.hpp"
 
 namespace icp {
+
+using namespace std;
 
 constexpr int R_DUMMY = 0;
 constexpr int R_AUTO = 1;
@@ -17,16 +21,35 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
 {
     robot_select_label = new QLabel("type:", this);
     robot_select = new QComboBox(this);
+    speed_label = new QLabel("speed:", this);
+    speed = new QLineEdit(this);
     remove = new QPushButton("remove", this);
     deselect = new QPushButton("deselect", this);
 
     robot_select_label->hide();
     robot_select->hide();
+    speed_label->hide();
+    speed->hide();
     deselect->hide();
     remove->hide();
 
     robot_select->addItems({ "Dummy", "Auto" });
+    speed->setValidator(
+        new QDoubleValidator(0, numeric_limits<double>::max(), 2)
+    );
 
+    connect(
+        robot_select.data(),
+        SIGNAL(currentIndexChanged(int)),
+        this,
+        SLOT(handle_type_change(int))
+    );
+    connect(
+        speed,
+        &QLineEdit::editingFinished,
+        this,
+        &ReditMenu::speed_editing_finished
+    );
     connect(
         deselect,
         &QPushButton::clicked,
@@ -39,12 +62,6 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
         this,
         &ReditMenu::handle_remove
     );
-    connect(
-        robot_select.data(),
-        SIGNAL(currentIndexChanged(int)),
-        this,
-        SLOT(handle_type_change(int))
-    );
 
     relayout(rect);
 }
@@ -53,6 +70,8 @@ void ReditMenu::relayout(QRect rect) {
     setGeometry(rect);
     robot_select_label->setGeometry(QRect(5, 5, 40, 30));
     robot_select->setGeometry(QRect(40, 5, 80, 30));
+    speed_label->setGeometry(QRect(125, 5, 45, 30));
+    speed->setGeometry(QRect(170, 5, 60, 30));
     remove->setGeometry(QRect(rect.width() - 65, 5, 60, 30));
     deselect->setGeometry(QRect(rect.width() - 130, 5, 60, 30));
 }
@@ -65,11 +84,15 @@ void ReditMenu::select_robot(Robot *robot) {
     if (robot) {
         robot_select_label->show();
         robot_select->show();
+        speed_label->show();
+        speed->show();
         deselect->show();
         remove->show();
     } else {
         robot_select_label->hide();
         robot_select->hide();
+        speed_label->hide();
+        speed->hide();
         deselect->hide();
         remove->hide();
     }
@@ -77,6 +100,7 @@ void ReditMenu::select_robot(Robot *robot) {
     this->robot = robot;
 
     robot_select->setCurrentIndex(get_robot_type());
+    speed->setText(QString::number(robot->speed()));
 }
 
 //---------------------------------------------------------------------------//
@@ -105,6 +129,12 @@ void ReditMenu::handle_type_change(int idx) {
         case R_AUTO:
             emit change_robot(robot, new AutoRobot(robot));
             break;
+    }
+}
+
+void ReditMenu::speed_editing_finished() {
+    if (robot) {
+        robot->set_speed(speed->text().toDouble());
     }
 }
 
