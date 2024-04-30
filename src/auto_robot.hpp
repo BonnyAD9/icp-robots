@@ -61,6 +61,11 @@ public:
      */
     void move(qreal delta, qreal distance) override;
 
+    qreal edist() const;
+    void set_edist(qreal dist);
+    qreal rspeed() const;
+    void set_rspeed(qreal speed);
+
 private:
     qreal sspeed;
     qreal rot_remain;

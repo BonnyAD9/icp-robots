@@ -90,5 +90,22 @@ void AutoRobot::move(qreal delta, qreal distance) {
     Robot::move(delta, distance);
 }
 
+qreal AutoRobot::edist() const {
+    return elide_dist;
+}
+
+void AutoRobot::set_edist(qreal dist) {
+    elide_dist = dist;
+}
+
+qreal AutoRobot::rspeed() const {
+    return rot_speed;
+}
+
+void AutoRobot::set_rspeed(qreal rspeed) {
+    rot_speed = rspeed;
+}
+
+
 } // namespace icp
 

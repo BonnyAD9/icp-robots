@@ -32,6 +32,7 @@ private slots:
     void handle_type_change(int idx);
     void speed_editing_finished();
     void angle_editing_finished();
+    void distance_editing_finished();
 
 private:
     int get_robot_type();
@@ -44,6 +45,8 @@ private:
     QPointer<QLineEdit> speed;
     QPointer<QLabel> angle_label;
     QPointer<QLineEdit> angle;
+    QPointer<QLabel> distance_label;
+    QPointer<QLineEdit> distance;
     QPointer<QPushButton> remove;
     QPointer<QPushButton> deselect;
 };
