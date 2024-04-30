@@ -12,6 +12,10 @@ namespace icp {
 
 using namespace std;
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 Window::Window(QWidget *parent) : QWidget(parent) {
     setGeometry(0, 0, 900, 600);
 
@@ -76,6 +80,10 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room->add_robot(unique_ptr<Robot>(new Robot(QPoint(201, 200), 0, 0)));
 }
 
+//---------------------------------------------------------------------------//
+//                                PROTECTED                                  //
+//---------------------------------------------------------------------------//
+
 void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
     room_view->resize(QSize(size.width(), size.height() - 40 * 2));
@@ -84,6 +92,10 @@ void Window::resizeEvent(QResizeEvent *event) {
     sim_controls->relayout(QRect(0, size.height() - 40, size.width(), 40));
     redit_menu->relayout(QRect(0, 0, size.width(), 40));
 }
+
+//---------------------------------------------------------------------------//
+//                               PRIVATE SLOTS                               //
+//---------------------------------------------------------------------------//
 
 void Window::handleMenuBtnClick() {
     menu->show();

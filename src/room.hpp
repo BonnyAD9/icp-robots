@@ -28,27 +28,50 @@ public:
      * @brief Adds obstacle to the room.
      * @param obstacle Obstacle to add to the room.
      */
-    void add_obstacle(std::unique_ptr<Obstacle> obstacle, bool drag = false);
+    void add_obstacle(std::unique_ptr<Obstacle> obstacle);
     /**
      * @brief Adds robot to the room.
      * @param robot Robot to add to the room.
      */
-    void add_robot(std::unique_ptr<Robot> robot, bool drag = false);
+    void add_robot(std::unique_ptr<Robot> robot);
 
 signals:
+    /**
+     * @brief Signal for new robot selection
+     * @param r new selected robot
+     */
     void new_selection(Robot *r);
 
 public slots:
     /**
      * @brief Play/pause the simulation.
-     *
      * @param play
      */
     void run_simulation(bool play);
+
+    /**
+     * @brief Remove robot
+     * @param r robot to be removed
+     */
     void remove_robot(Robot *r);
+
+    /**
+     * @brief Changes robot to new type
+     * @param old old robot to be replaced
+     * @param replace new robot with new type
+     */
     void change_robot(Robot *old, Robot *replace);
 
+    /**
+     * @brief Adds new obstacle
+     * @param obstacle obstacle to be added to room
+     */
     void add_obstacle_slot(Obstacle *obstacle);
+
+    /**
+     * @brief Adds new robot
+     * @param robot robot to be added to room
+     */
     void add_robot_slot(Robot *robot);
 
 protected:

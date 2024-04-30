@@ -11,19 +11,45 @@
 
 namespace icp {
 
+/**
+ * @brief Menu for editing robots
+ */
 class ReditMenu : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Creates new robot edit menu
+     * @param rect size of the menu
+     * @param parent Parent widget
+     */
     ReditMenu(QRect rect, QWidget *parent = nullptr);
 
+    /**
+     * @brief Re-layouts the menu
+     * @param rect new size of the menu
+     */
     void relayout(QRect rect);
 
 signals:
+    /**
+     * @brief Signal to remove robot from room
+     * @param robot robot to be removed
+     */
     void remove_robot(Robot *robot);
+
+    /**
+     * @brief Signal for changing robot type
+     * @param old old robot to be replaced
+     * @param replace new robot with new type
+     */
     void change_robot(Robot *old, Robot *replace);
 
 public slots:
+    /**
+     * @brief Handles selecting robot
+     * @param robot robot to be selected
+     */
     void select_robot(Robot *robot);
 
 private slots:

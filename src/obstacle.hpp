@@ -6,12 +6,21 @@
 
 namespace icp {
 
+/**
+ * @brief Class representing obstacle
+ */
 class Obstacle : public QGraphicsRectItem {
 public:
+    /**
+     * @brief Creates new obstacle
+     * @param hitbox Hitbox of the obstacle
+     * @param parent Parent object
+     */
     explicit Obstacle(QRectF hitbox, QGraphicsItem *parent = nullptr);
 
-    void start_drag();
-
+    /**
+     * @brief Enum representing state of the obstacle
+     */
     enum class State : int {
         None = 0x0,
         Dragging = 0x1,
@@ -26,11 +35,13 @@ public:
      * @return Hitbox of the rectangle.
      */
     QRectF hitbox() const;
+
     /**
      * @brief Sets the hitbox of the rectangle.
      * @param hitbox the new hitbox.
      */
     void set_hitbox(QRectF hitbox);
+
     /**
      * @brief Checks whether the obstacle is grabbed by the user.
      * @return `true` if it is grabbed, otherwise `false`.
@@ -47,9 +58,9 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
-    State state;
-
     void setResizeCursor(QGraphicsSceneHoverEvent *event);
+
+    State state;
 };
 
 } // namespace icp

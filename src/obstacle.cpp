@@ -52,6 +52,10 @@ Obstacle::State operator~(const Obstacle::State &s) {
     return static_cast<Obstacle::State>(~static_cast<int>(s));
 }
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 Obstacle::Obstacle(QRectF hitbox, QGraphicsItem *parent)
     : QGraphicsRectItem(hitbox, parent)
 {
@@ -80,11 +84,9 @@ bool Obstacle::is_grabbed() const {
     return state == State::Dragging;
 }
 
-void Obstacle::start_drag() {
-    state = State::Dragging;
-    setCursor(Qt::ClosedHandCursor);
-    grabMouse();
-}
+//---------------------------------------------------------------------------//
+//                                 PROTECTED                                 //
+//---------------------------------------------------------------------------//
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
@@ -148,6 +150,10 @@ void Obstacle::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     unsetCursor();
     QGraphicsRectItem::hoverLeaveEvent(event);
 }
+
+//---------------------------------------------------------------------------//
+//                                  PRIVATE                                  //
+//---------------------------------------------------------------------------//
 
 void Obstacle::setResizeCursor(QGraphicsSceneHoverEvent *event) {
     constexpr qreal R_BORDER = BORDER_THICKNESS / 2;

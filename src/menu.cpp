@@ -11,6 +11,10 @@ namespace icp {
 
 using namespace std;
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 ObstacleButton::ObstacleButton(
     QRectF hitbox,
     QGraphicsItem *parent
@@ -27,6 +31,10 @@ ObstacleButton::ObstacleButton(
     ));
     setAcceptHoverEvents(true);
 }
+
+//---------------------------------------------------------------------------//
+//                                 PROTECTED                                 //
+//---------------------------------------------------------------------------//
 
 void ObstacleButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
@@ -65,6 +73,10 @@ void ObstacleButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
  */
 constexpr qreal ROBOT_D = 50;
 
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
+
 RobotButton::RobotButton(
     QPoint pos,
     QGraphicsItem *parent
@@ -87,6 +99,10 @@ RobotButton::RobotButton(
     );
     eye->setRect(e);
 }
+
+//---------------------------------------------------------------------------//
+//                                 PROTECTED                                 //
+//---------------------------------------------------------------------------//
 
 void RobotButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
@@ -119,6 +135,10 @@ void RobotButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 void RobotButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     unsetCursor();
 }
+
+//---------------------------------------------------------------------------//
+//                                  PUBLIC                                   //
+//---------------------------------------------------------------------------//
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
     setVisible(false);
@@ -160,6 +180,10 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     connect(close_btn, &QPushButton::clicked, this, &Menu::handle_close_btn);
 }
 
+//---------------------------------------------------------------------------//
+//                                 PROTECTED                                 //
+//---------------------------------------------------------------------------//
+
 void Menu::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
     painter.fillRect(QRect(0, 0, 100, 600 - 40 * 2), QColor(0x40, 0x40, 0x40));
@@ -169,6 +193,10 @@ void Menu::mousePressEvent(QMouseEvent *e) {
     if (e->pos().x() > 100)
         setVisible(false);
 }
+
+//---------------------------------------------------------------------------//
+//                               PRIVATE SLOTS                               //
+//---------------------------------------------------------------------------//
 
 void Menu::handle_close_btn() {
     setVisible(false);
