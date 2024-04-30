@@ -52,6 +52,9 @@ public:
      */
     void move(qreal delta, qreal distance) override;
 
+    virtual qreal speed() override;
+    virtual void set_speed(qreal speed) override;
+
     /**
      * @brief Gets rotation speed of the robot
      */

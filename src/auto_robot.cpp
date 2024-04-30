@@ -65,8 +65,8 @@ AutoRobot::AutoRobot(Robot *r) :
 void AutoRobot::move(qreal delta, qreal distance) {
     if (rot_remain == 0 && distance <= elide_dist) {
         rot_remain = elide_rot;
-        sspeed = speed();
-        set_speed(0);
+        sspeed = Robot::speed();
+        Robot::set_speed(0);
     }
 
     if (rot_remain != 0) {
@@ -82,11 +82,27 @@ void AutoRobot::move(qreal delta, qreal distance) {
         set_angle(orientation() + ang);
 
         if (rot_remain == 0) {
-            set_speed(sspeed);
+            Robot::set_speed(sspeed);
         }
     }
 
     Robot::move(delta, distance);
+}
+
+qreal AutoRobot::speed() {
+    if (rot_remain != 0) {
+        return sspeed;
+    } else {
+        return Robot::speed();
+    }
+}
+
+void AutoRobot::set_speed(qreal speed) {
+    if (rot_remain != 0) {
+        sspeed = speed;
+    } else {
+        Robot::set_speed(speed);
+    }
 }
 
 qreal AutoRobot::edist() const {

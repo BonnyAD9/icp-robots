@@ -50,19 +50,34 @@ ControlRobot::ControlRobot(Robot *r) :
 
 void ControlRobot::move(qreal delta, qreal distance) {
     if (distance == 0) {
-        sspeed = speed();
-        set_speed(0);
+        sspeed = Robot::speed();
+        Robot::set_speed(0);
     } else {
-        set_speed(cur_speed);
+        Robot::set_speed(cur_speed);
     }
 
     if (cur_rot_speed != 0) {
         auto ang = cur_rot_speed * delta;
-        set_angle(orientation() + ang);
+        Robot::set_angle(orientation() + ang);
     }
 
     Robot::move(delta, distance);
 }
+
+qreal ControlRobot::speed() {
+    if (cur_speed == 0) {
+        return sspeed;
+    }
+    return Robot::speed();
+}
+
+void ControlRobot::set_speed(qreal speed) {
+    if (cur_speed == 0) {
+        sspeed = speed;
+    }
+    Robot::set_speed(speed);
+}
+
 
 qreal ControlRobot::rspeed() const {
     return rot_speed;
