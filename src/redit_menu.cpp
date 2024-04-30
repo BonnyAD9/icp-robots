@@ -11,6 +11,13 @@ using namespace std;
 constexpr int R_DUMMY = 0;
 constexpr int R_AUTO = 1;
 
+qreal dmod(qreal num, unsigned mod) {
+    auto sign = num > 0 ? 1 : -1;
+    num = qAbs(num);
+    auto rnum = (int)num % mod;
+    return sign * (rnum + (num - (int)num));
+}
+
 //---------------------------------------------------------------------------//
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
@@ -169,7 +176,11 @@ void ReditMenu::select_robot(Robot *robot) {
 
     robot_select->setCurrentIndex(get_robot_type());
     speed->setText(QString::number(robot->speed()));
-    angle->setText(QString::number(-robot->orientation() / M_PI * 180));
+    auto num = dmod(-robot->orientation() / M_PI * 180, 360);
+    if (num < -180) {
+        num += 360;
+    }
+    angle->setText(QString::number(num));
 
     AutoRobot *arob = dynamic_cast<AutoRobot *>(robot);
     if (arob) {
