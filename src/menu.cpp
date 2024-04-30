@@ -70,6 +70,10 @@ void RobotButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
     setVisible(false);
+    auto pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(0, 0, 0, 0));
+    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
+    setPalette(pal);
 
     close_btn = new QPushButton("close", this);
     close_btn->setGeometry(5, 5, 54, 30);
@@ -84,6 +88,8 @@ Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
     //     SLOT(handle_obstacle_btn())
     // );
     button_scene = new QGraphicsScene(this);
+    button_scene->setPalette(pal);
+    button_scene->setBackgroundBrush(QBrush(QColor(0, 0, 0, 0)));
 
     obstacle_btn = new ObstacleButton(QRectF(0, 0, 60, 60), room, this);
     button_scene->addItem(obstacle_btn);
@@ -93,6 +99,8 @@ Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
 
     button_view = new QGraphicsView(button_scene, this);
     button_view->setGeometry(5, 40, 90, 300);
+    button_view->setPalette(pal);
+    button_view->setBackgroundBrush(QBrush(QColor(0, 0, 0, 0)));
 
     // robot_btn = new QPushButton("robot", this);
     // robot_btn->setGeometry(5, 75, 54, 30);
@@ -100,8 +108,8 @@ Menu::Menu(QPointer<Room> room, QWidget *parent) : QWidget(parent) {
 }
 
 void Menu::paintEvent(QPaintEvent *event) {
-    QPainter painter(this);
-    painter.fillRect(rect(), QColor("#404040"));
+    /*QPainter painter(this);
+    painter.fillRect(rect(), QColor("#404040"));*/
 }
 
 void Menu::handle_close_btn() {
