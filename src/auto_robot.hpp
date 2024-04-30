@@ -13,7 +13,7 @@ namespace icp {
 class AutoRobot : public Robot {
 public:
     /**
-     * @brief Craetes new robot with basic AI.
+     * @brief Creates new robot with basic AI.
      * @param position Initial position of the robot.
      * @param step The speed and initial orientation of the robot.
      * @param elide_dist How far from obstacle the robot stops and starts to

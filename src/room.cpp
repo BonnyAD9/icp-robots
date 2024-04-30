@@ -6,6 +6,7 @@
 
 #include <QPointer>
 #include <QTimerEvent>
+#include <QKeyEvent>
 
 namespace icp {
 
@@ -123,6 +124,8 @@ Room::Room(QObject *parent) :
 {
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
+    control_robot = new ControlRobot(QPoint(600, 100));
+    add_robot(unique_ptr<Robot>(control_robot));
 }
 
 void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
@@ -192,6 +195,36 @@ void Room::change_robot(Robot *old, Robot *replace) {
 
 void Room::timerEvent(QTimerEvent *event) {
     tick(TICK_DELTA);
+}
+
+void Room::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_Left:
+            control_robot->left();
+            break;
+        case Qt::Key_Right:
+            control_robot->right();
+            break;
+        case Qt::Key_Up:
+            control_robot->forward();
+            break;
+    }
+    QGraphicsScene::keyPressEvent(event);
+}
+
+void Room::keyReleaseEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_Left:
+            control_robot->left(false);
+            break;
+        case Qt::Key_Right:
+            control_robot->right(false);
+            break;
+        case Qt::Key_Up:
+            control_robot->forward(false);
+            break;
+    }
+    QGraphicsScene::keyPressEvent(event);
 }
 
 //---------------------------------------------------------------------------//
