@@ -23,6 +23,8 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     robot_select = new QComboBox(this);
     speed_label = new QLabel("speed:", this);
     speed = new QLineEdit(this);
+    angle_label = new QLabel("angle:", this);
+    angle = new QLineEdit(this);
     remove = new QPushButton("remove", this);
     deselect = new QPushButton("deselect", this);
 
@@ -30,6 +32,8 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     robot_select->hide();
     speed_label->hide();
     speed->hide();
+    angle_label->hide();
+    angle->hide();
     deselect->hide();
     remove->hide();
 
@@ -37,6 +41,7 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     speed->setValidator(
         new QDoubleValidator(0, numeric_limits<double>::max(), 2)
     );
+    angle->setValidator(new QDoubleValidator(-360, 360, 2));
 
     connect(
         robot_select.data(),
@@ -49,6 +54,12 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
         &QLineEdit::editingFinished,
         this,
         &ReditMenu::speed_editing_finished
+    );
+    connect(
+        angle,
+        &QLineEdit::editingFinished,
+        this,
+        &ReditMenu::angle_editing_finished
     );
     connect(
         deselect,
@@ -72,6 +83,8 @@ void ReditMenu::relayout(QRect rect) {
     robot_select->setGeometry(QRect(40, 5, 80, 30));
     speed_label->setGeometry(QRect(125, 5, 45, 30));
     speed->setGeometry(QRect(170, 5, 60, 30));
+    angle_label->setGeometry(QRect(235, 5, 45, 30));
+    angle->setGeometry(QRect(280, 5, 60, 30));
     remove->setGeometry(QRect(rect.width() - 65, 5, 60, 30));
     deselect->setGeometry(QRect(rect.width() - 130, 5, 60, 30));
 }
@@ -86,6 +99,8 @@ void ReditMenu::select_robot(Robot *robot) {
         robot_select->show();
         speed_label->show();
         speed->show();
+        angle_label->show();
+        angle->show();
         deselect->show();
         remove->show();
     } else {
@@ -93,6 +108,8 @@ void ReditMenu::select_robot(Robot *robot) {
         robot_select->hide();
         speed_label->hide();
         speed->hide();
+        angle_label->hide();
+        angle->hide();
         deselect->hide();
         remove->hide();
     }
@@ -101,6 +118,7 @@ void ReditMenu::select_robot(Robot *robot) {
 
     robot_select->setCurrentIndex(get_robot_type());
     speed->setText(QString::number(robot->speed()));
+    angle->setText(QString::number(-robot->orientation() / M_PI * 180));
 }
 
 //---------------------------------------------------------------------------//
@@ -135,6 +153,12 @@ void ReditMenu::handle_type_change(int idx) {
 void ReditMenu::speed_editing_finished() {
     if (robot) {
         robot->set_speed(speed->text().toDouble());
+    }
+}
+
+void ReditMenu::angle_editing_finished() {
+    if (robot) {
+        robot->set_angle(-angle->text().toDouble() / 180 * M_PI);
     }
 }
 
