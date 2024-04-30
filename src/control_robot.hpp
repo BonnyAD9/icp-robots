@@ -17,10 +17,10 @@ public:
      * @param parent Parent object
      */
     explicit ControlRobot(
-        QPoint position,
+        QPointF position,
         QPointF step = QPoint(0, 20),
         qreal rot_speed = M_PI / 4,
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
 
     /**
@@ -32,12 +32,18 @@ public:
      * @param parent Parent object
      */
     explicit ControlRobot(
-        QPoint position,
+        QPointF position,
         qreal angle,
         qreal speed,
         qreal rot_speed = M_PI / 4,
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
+
+    /**
+     * @brief Creates new controlled robot based on given robot
+     * @param r robot to create controll robot based on
+     */
+    explicit ControlRobot(Robot *r);
 
     /**
      * @brief Moves the robot.
@@ -45,6 +51,17 @@ public:
      * @param distance Distance to the closest obstacle in front of the robot.
      */
     void move(qreal delta, qreal distance) override;
+
+    /**
+     * @brief Gets rotation speed of the robot
+     */
+    qreal rspeed() const;
+
+    /**
+     * @brief Sets rotation speed of the robot
+     * @param speed new rotation speed
+     */
+    void set_rspeed(qreal speed);
 
     /**
      * @brief Starts moving robot forward

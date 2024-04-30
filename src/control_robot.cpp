@@ -11,10 +11,10 @@ using namespace std;
 //---------------------------------------------------------------------------//
 
 ControlRobot::ControlRobot(
-    QPoint position,
+    QPointF position,
     QPointF step,
     qreal rot_speed,
-    QGraphicsItem *parent
+    QObject *parent
 ) : ControlRobot(
     position,
     atan2(step.y(), step.x()),
@@ -24,14 +24,24 @@ ControlRobot::ControlRobot(
 ) {}
 
 ControlRobot::ControlRobot(
-    QPoint position,
+    QPointF position,
     qreal angle,
     qreal speed,
     qreal rot_speed,
-    QGraphicsItem *parent
+    QObject *parent
 ) : Robot(position, angle, 0, parent),
     sspeed(speed),
     rot_speed(rot_speed),
+    cur_speed(0),
+    cur_rot_speed(0)
+{
+    setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+}
+
+ControlRobot::ControlRobot(Robot *r) :
+    Robot(r),
+    sspeed(r->speed()),
+    rot_speed(M_PI / M_E),
     cur_speed(0),
     cur_rot_speed(0)
 {
@@ -52,6 +62,14 @@ void ControlRobot::move(qreal delta, qreal distance) {
     }
 
     Robot::move(delta, distance);
+}
+
+qreal ControlRobot::rspeed() const {
+    return rot_speed;
+}
+
+void ControlRobot::set_rspeed(qreal speed) {
+    rot_speed = speed;
 }
 
 void ControlRobot::forward(bool start) {

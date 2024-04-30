@@ -124,8 +124,6 @@ Room::Room(QObject *parent) :
 {
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
-    control_robot = new ControlRobot(QPoint(600, 100));
-    add_robot(unique_ptr<Robot>(control_robot));
 }
 
 void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
@@ -198,33 +196,39 @@ void Room::timerEvent(QTimerEvent *event) {
 }
 
 void Room::keyPressEvent(QKeyEvent *event) {
+    auto robot = dynamic_cast<ControlRobot *>(selected);
+    if (!robot)
+        return;
+
     switch (event->key()) {
         case Qt::Key_Left:
-            control_robot->left();
+            robot->left();
             break;
         case Qt::Key_Right:
-            control_robot->right();
+            robot->right();
             break;
         case Qt::Key_Up:
-            control_robot->forward();
+            robot->forward();
             break;
     }
-    QGraphicsScene::keyPressEvent(event);
 }
 
 void Room::keyReleaseEvent(QKeyEvent *event) {
+    auto robot = dynamic_cast<ControlRobot *>(selected);
+    if (!robot)
+        return;
+
     switch (event->key()) {
         case Qt::Key_Left:
-            control_robot->left(false);
+            robot->left(false);
             break;
         case Qt::Key_Right:
-            control_robot->right(false);
+            robot->right(false);
             break;
         case Qt::Key_Up:
-            control_robot->forward(false);
+            robot->forward(false);
             break;
     }
-    QGraphicsScene::keyPressEvent(event);
 }
 
 //---------------------------------------------------------------------------//

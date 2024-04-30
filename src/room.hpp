@@ -68,7 +68,6 @@ private:
 
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
-    ControlRobot *control_robot;
 
     Robot *selected;
 

@@ -47,6 +47,8 @@ AutoRobot::AutoRobot(
 
 AutoRobot::AutoRobot(Robot *r) :
     Robot(r),
+    sspeed(r->speed()),
+    rot_remain(0),
     elide_dist(20),
     elide_rot(M_PI / M_E),
     rot_speed(M_PI / 4)
