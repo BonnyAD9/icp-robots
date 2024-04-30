@@ -73,7 +73,7 @@ QRectF Obstacle::hitbox() const {
 
 void Obstacle::set_hitbox(QRectF hitbox) {
     constexpr qreal ADJ = BORDER_THICKNESS / 2;
-    setRect(rect().adjusted(ADJ, ADJ, -ADJ, -ADJ));
+    setRect(hitbox.adjusted(ADJ, ADJ, -ADJ, -ADJ));
 }
 
 bool Obstacle::is_grabbed() const {

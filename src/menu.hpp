@@ -16,56 +16,76 @@
 
 namespace icp {
 
-class ObstacleButton : public QGraphicsRectItem {
+/**
+ * @brief Represents obstacle menu button
+ */
+class ObstacleButton : public QObject, public QGraphicsRectItem {
+    Q_OBJECT
 public:
-    explicit ObstacleButton(
-        QRectF hitbox,
-        QPointer<Room> room,
-        QWidget *menu,
-        QGraphicsItem *parent = nullptr
-    );
+    /**
+     * @brief Creates new Obstacle menu button
+     * @param hitbox Hitbox of the button
+     * @param parent Parent item
+     */
+    explicit ObstacleButton(QRectF hitbox,QGraphicsItem *parent = nullptr);
+
+signals:
+    void add_obstacle(QRectF rec);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
-    QPointer<Room> room;
-    QWidget *menu;
+    QPointF pos;
 };
 
-class RobotButton : public QGraphicsEllipseItem {
+/**
+ * @brief Represents robot menu button
+ */
+class RobotButton : public QObject, public QGraphicsEllipseItem {
+    Q_OBJECT
 public:
-    explicit RobotButton(
-        QPoint pos,
-        QPointer<Room> room,
-        QWidget *menu,
-        QGraphicsItem *parent = nullptr
-    );
+    /**
+     * @brief Creates new Robot menu button
+     * @param hitbox Hitbox of the button
+     * @param parent Parent item
+     */
+    explicit RobotButton(QPoint pos, QGraphicsItem *parent = nullptr);
+
+signals:
+    void add_robot(QPointF point);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
-    QPointer<Room> room;
-    QWidget *menu;
+    QPointF pos;
 };
 
 class Menu : public QWidget {
     Q_OBJECT
 public:
-    explicit Menu(QPointer<Room> room, QWidget *parent = nullptr);
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
+    /**
+     * @brief Creates new menu
+     * @param parent Parent widget
+     */
+    explicit Menu(QWidget *parent = nullptr);
 
 signals:
     void add_obstacle(Obstacle *obstacle);
     void add_robot(Robot *robot);
 
+protected:
+    void paintEvent(QPaintEvent *e) override;
+
 private slots:
     void handle_close_btn();
-    void handle_obstacle_btn();
-    void handle_robot_btn();
+    void handle_obstacle_btn(QRectF rec);
+    void handle_robot_btn(QPointF point);
 
 private:
     QPointer<QPushButton> close_btn;

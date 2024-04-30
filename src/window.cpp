@@ -38,8 +38,8 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         menu_button, &QPushButton::clicked, this, &Window::handleMenuBtnClick
     );
 
-    menu = new Menu(room, this);
-    menu->setGeometry(0, 0, 100, 600);
+    menu = new Menu(this);
+    menu->setGeometry(0, 40, 800, 600 - 40 * 2);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);
     connect(
@@ -55,7 +55,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         room,
         SLOT(add_obstacle_slot(Obstacle *))
     );
-    
+
     connect(
         menu,
         SIGNAL(add_robot(Robot *)),
