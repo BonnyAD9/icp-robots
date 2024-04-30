@@ -65,6 +65,8 @@ public:
     void set_edist(qreal dist);
     qreal rspeed() const;
     void set_rspeed(qreal speed);
+    qreal rdist() const;
+    void set_rdist(qreal dist);
 
 private:
     qreal sspeed;

@@ -69,15 +69,12 @@ void AutoRobot::move(qreal delta, qreal distance) {
 
     if (rot_remain != 0) {
         auto ang = rot_speed * delta;
+        ang = rot_remain < 0 ? -ang : ang;
         if (qAbs(rot_remain) < qAbs(ang)) {
-            ang = qAbs(rot_remain);
+            ang = rot_remain;
             rot_remain = 0;
         } else {
-            if (rot_remain > 0) {
-                rot_remain -= ang;
-            } else {
-                rot_remain += ang;
-            }
+            rot_remain -= ang;
         }
 
         set_angle(orientation() + ang);
@@ -106,6 +103,13 @@ void AutoRobot::set_rspeed(qreal rspeed) {
     rot_speed = rspeed;
 }
 
+qreal AutoRobot::rdist() const {
+    return elide_rot;
+}
+
+void AutoRobot::set_rdist(qreal dist) {
+    elide_rot = dist;
+}
 
 } // namespace icp
 
