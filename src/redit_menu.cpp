@@ -3,13 +3,15 @@
 #include <limits>
 
 #include "auto_robot.hpp"
+#include "control_robot.hpp"
 
 namespace icp {
 
 using namespace std;
 
-constexpr int R_DUMMY = 0;
-constexpr int R_AUTO = 1;
+constexpr int R_AUTO = 0;
+constexpr int R_CONTROL = 1;
+constexpr int R_DUMMY = 2;
 
 qreal dmod(qreal num, unsigned mod) {
     auto sign = num > 0 ? 1 : -1;
@@ -56,7 +58,7 @@ ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     deselect->hide();
     remove->hide();
 
-    robot_select->addItems({ "Dummy", "Auto" });
+    robot_select->addItems({ "Auto", "Control", "Dummy" });
     speed->setValidator(
         new QDoubleValidator(0, numeric_limits<double>::max(), 2)
     );
@@ -131,10 +133,10 @@ void ReditMenu::relayout(QRect rect) {
     speed->setGeometry(QRect(170, 5, 60, 30));
     angle_label->setGeometry(QRect(235, 5, 45, 30));
     angle->setGeometry(QRect(280, 5, 60, 30));
-    distance_label->setGeometry(QRect(345, 5, 55, 30));
-    distance->setGeometry(QRect(400, 5, 60, 30));
-    rspeed_label->setGeometry(QRect(465, 5, 70, 30));
-    rspeed->setGeometry(QRect(525, 5, 60, 30));
+    rspeed_label->setGeometry(QRect(345, 5, 60, 30));
+    rspeed->setGeometry(QRect(405, 5, 60, 30));
+    distance_label->setGeometry(QRect(470, 5, 55, 30));
+    distance->setGeometry(QRect(525, 5, 60, 30));
     rdist_label->setGeometry(QRect(590, 5, 50, 30));
     rdist->setGeometry(QRect(640, 5, 60, 30));
     remove->setGeometry(QRect(rect.width() - 65, 5, 60, 30));
@@ -146,6 +148,19 @@ void ReditMenu::relayout(QRect rect) {
 //---------------------------------------------------------------------------//
 
 void ReditMenu::select_robot(Robot *robot) {
+    if (this->robot == robot) {
+        return;
+    }
+
+    if (this->robot) {
+        disconnect(
+            this->robot,
+            &Robot::angle_change,
+            this,
+            &ReditMenu::robot_angle_change
+        );
+    }
+
     this->robot = robot;
     if (robot) {
         robot_select_label->show();
@@ -154,6 +169,12 @@ void ReditMenu::select_robot(Robot *robot) {
         speed->show();
         angle_label->show();
         angle->show();
+        distance_label->hide();
+        distance->hide();
+        rspeed_label->hide();
+        rspeed->hide();
+        rdist_label->hide();
+        rdist->hide();
         deselect->show();
         remove->show();
     } else {
@@ -174,13 +195,20 @@ void ReditMenu::select_robot(Robot *robot) {
         return;
     }
 
+    connect(
+        robot,
+        &Robot::angle_change,
+        this,
+        &ReditMenu::robot_angle_change
+    );
+
     robot_select->setCurrentIndex(get_robot_type());
-    speed->setText(QString::number(robot->speed()));
+    speed->setText(QString::number(robot->speed(), 'f', 2));
     auto num = dmod(-robot->orientation() / M_PI * 180, 360);
     if (num < -180) {
         num += 360;
     }
-    angle->setText(QString::number(num));
+    angle->setText(QString::number(num, 'f', 2));
 
     AutoRobot *arob = dynamic_cast<AutoRobot *>(robot);
     if (arob) {
@@ -191,9 +219,16 @@ void ReditMenu::select_robot(Robot *robot) {
         rdist_label->show();
         rdist->show();
 
-        distance->setText(QString::number(arob->edist()));
-        rspeed->setText(QString::number(arob->rspeed() / M_PI * 180));
-        rdist->setText(QString::number(-arob->rdist() / M_PI * 180));
+        distance->setText(QString::number(arob->edist(), 'f', 2));
+        rspeed->setText(QString::number(arob->rspeed() / M_PI * 180, 'f', 2));
+        rdist->setText(QString::number(-arob->rdist() / M_PI * 180, 'f', 2));
+    }
+    ControlRobot *crob = dynamic_cast<ControlRobot *>(robot);
+    if (crob) {
+        rspeed_label->show();
+        rspeed->show();
+
+        rspeed->setText(QString::number(crob->rspeed() / M_PI * 180));
     }
 }
 
@@ -217,11 +252,14 @@ void ReditMenu::handle_type_change(int idx) {
     }
 
     switch (idx) {
-        case R_DUMMY:
-            emit change_robot(robot, new Robot(robot));
-            break;
         case R_AUTO:
             emit change_robot(robot, new AutoRobot(robot));
+            break;
+        case R_CONTROL:
+            emit change_robot(robot, new ControlRobot(robot));
+            break;
+        case R_DUMMY:
+            emit change_robot(robot, new Robot(robot));
             break;
     }
 }
@@ -259,6 +297,18 @@ void ReditMenu::rdist_editing_finished() {
     }
 }
 
+void ReditMenu::robot_angle_change(qreal angle) {
+    if (this->angle->hasFocus()) {
+        return;
+    }
+
+    angle = dmod(-angle / M_PI * 180, 360);
+    if (angle < -180) {
+        angle += 360;
+    }
+    this->angle->setText(QString::number(angle, 'f', 2));
+}
+
 //---------------------------------------------------------------------------//
 //                                 PRIVATE                                   //
 //---------------------------------------------------------------------------//
@@ -267,6 +317,10 @@ int ReditMenu::get_robot_type() {
     auto auto_rob = dynamic_cast<AutoRobot *>(robot);
     if (auto_rob) {
         return R_AUTO;
+    }
+    auto control_rob = dynamic_cast<ControlRobot *>(robot);
+    if (control_rob) {
+        return R_CONTROL;
     }
     return R_DUMMY;
 }

@@ -6,6 +6,7 @@
 
 #include <QPointer>
 #include <QTimerEvent>
+#include <QKeyEvent>
 
 namespace icp {
 
@@ -192,6 +193,42 @@ void Room::change_robot(Robot *old, Robot *replace) {
 
 void Room::timerEvent(QTimerEvent *event) {
     tick(TICK_DELTA);
+}
+
+void Room::keyPressEvent(QKeyEvent *event) {
+    auto robot = dynamic_cast<ControlRobot *>(selected);
+    if (!robot)
+        return;
+
+    switch (event->key()) {
+        case Qt::Key_Left:
+            robot->left();
+            break;
+        case Qt::Key_Right:
+            robot->right();
+            break;
+        case Qt::Key_Up:
+            robot->forward();
+            break;
+    }
+}
+
+void Room::keyReleaseEvent(QKeyEvent *event) {
+    auto robot = dynamic_cast<ControlRobot *>(selected);
+    if (!robot)
+        return;
+
+    switch (event->key()) {
+        case Qt::Key_Left:
+            robot->left(false);
+            break;
+        case Qt::Key_Right:
+            robot->right(false);
+            break;
+        case Qt::Key_Up:
+            robot->forward(false);
+            break;
+    }
 }
 
 //---------------------------------------------------------------------------//

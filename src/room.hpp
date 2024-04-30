@@ -7,6 +7,7 @@
 
 #include "obstacle.hpp"
 #include "robot.hpp"
+#include "control_robot.hpp"
 
 namespace icp {
 
@@ -49,6 +50,9 @@ public slots:
 
 protected:
     void timerEvent(QTimerEvent *event) override;
+
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 
 private slots:
     void select_robot(Robot *r);

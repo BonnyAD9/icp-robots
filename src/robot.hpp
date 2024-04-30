@@ -86,7 +86,7 @@ public:
     /**
      * @brief Gets the movement speed.
      */
-    qreal speed();
+    virtual qreal speed();
 
     void set_selected(bool val = true);
 
@@ -108,10 +108,11 @@ public:
      * @brief Sets the robot movement speed.
      * @param speed Speed of the robot in pixels per second.
      */
-    void set_speed(qreal speed);
+    virtual void set_speed(qreal speed);
 
 signals:
     void select(Robot *sender);
+    void angle_change(qreal angle);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
