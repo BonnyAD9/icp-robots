@@ -115,7 +115,12 @@ qreal rect_distance(QPointF p, QPointF d, QRectF r) {
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Room::Room(QObject *parent) : QGraphicsScene(parent), obstacles(), timer(0) {
+Room::Room(QObject *parent) :
+    QGraphicsScene(parent),
+    obstacles(),
+    timer(0),
+    selected(nullptr)
+{
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
@@ -130,6 +135,12 @@ void Room::add_robot(unique_ptr<Robot> robot) {
     Robot *rob = robot.release();
     addItem(rob);
     robots.push_back(rob);
+    connect(
+        rob,
+        &Robot::select,
+        this,
+        &Room::select_robot
+    );
 }
 
 //---------------------------------------------------------------------------//
@@ -146,12 +157,55 @@ void Room::run_simulation(bool play) {
     }
 }
 
+void Room::remove_robot(Robot *r) {
+    unique_ptr<Robot> rob = unique_ptr<Robot>(r);
+    if (r == selected) {
+        select_robot(NULL);
+    }
+
+    auto p = find(robots.begin(), robots.end(), r);
+    if (p == robots.end()) {
+        return;
+    }
+
+    removeItem(r);
+
+    swap(*p, *robots.rbegin());
+    robots.pop_back();
+}
+
+void Room::change_robot(Robot *old, Robot *replace) {
+    auto rep = unique_ptr<Robot>(replace);
+    auto sel = selected;
+
+    remove_robot(old);
+    add_robot(std::move(rep));
+
+    if (old == sel) {
+        replace->set_selected(true);
+    }
+}
+
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//
 
 void Room::timerEvent(QTimerEvent *event) {
     tick(TICK_DELTA);
+}
+
+//---------------------------------------------------------------------------//
+//                              PRIVATE SLOTS                                //
+//---------------------------------------------------------------------------//
+
+void Room::select_robot(Robot *r) {
+    if (selected && selected != r) {
+        QSignalBlocker block(selected);
+        selected->set_selected(false);
+    }
+
+    selected = r;
+    emit new_selection(selected);
 }
 
 //---------------------------------------------------------------------------//

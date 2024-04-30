@@ -11,7 +11,9 @@ namespace icp {
 /**
  * @brief Represents a robot that can move and can be moved by the user.
  */
-class Robot : public QGraphicsEllipseItem {
+class Robot : public QObject, public QGraphicsEllipseItem {
+    Q_OBJECT
+
 public:
     /**
      * @brief Creates a new robot.
@@ -20,9 +22,9 @@ public:
      * @param parent The parent graphics item.
      */
     explicit Robot(
-        QPoint position,
+        QPointF position,
         QPointF step = QPointF(0, 20),
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
 
     /**
@@ -33,11 +35,13 @@ public:
      * @param parent Parent object.
      */
     explicit Robot(
-        QPoint position,
+        QPointF position,
         qreal angle,
         qreal speed,
-        QGraphicsItem *parent = nullptr
+        QObject *parent = nullptr
     );
+
+    explicit Robot(Robot *other);
 
     /**
      * @brief Moves the robot. The robot must also support 'unmove' of the one
@@ -84,7 +88,8 @@ public:
      */
     qreal speed();
 
-protected:
+    void set_selected(bool val = true);
+
     /**
      * @brief Sets the angle and speed so that it matches the given step.
      */
@@ -105,6 +110,10 @@ protected:
      */
     void set_speed(qreal speed);
 
+signals:
+    void select(Robot *sender);
+
+protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;

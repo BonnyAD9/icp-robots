@@ -13,9 +13,9 @@ SimControls::SimControls(QRect rect, QWidget *parent)
     play_pause = new QPushButton("pause", this);
     connect(
         play_pause,
-        SIGNAL(clicked(bool)),
+        &QPushButton::clicked,
         this,
-        SLOT(handle_play_pause(bool))
+        &SimControls::handle_play_pause
     );
 
     relayout(rect);

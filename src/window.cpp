@@ -16,10 +16,10 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     setGeometry(0, 0, 800, 600);
 
     room = new Room();
-    room->setSceneRect(0, 0, 800, 600 - 40);
+    room->setSceneRect(0, 40, 800, 600 - 40 * 2);
 
     room_view = new QGraphicsView(room, this);
-    room_view->setGeometry(0, 0, 800, 600 - 40);
+    room_view->setGeometry(0, 40, 800, 600 - 40 * 2);
     room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     room_view->setFrameStyle(QFrame::NoFrame);
@@ -27,8 +27,13 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform
     );
 
+    redit_menu = new ReditMenu(QRect(0, 0, 600, 40), this);
+    connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
+    connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
+    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
+
     menu_button = new QPushButton("menu", this);
-    menu_button->setGeometry(5, 5, 54, 30);
+    menu_button->setGeometry(5, 45, 54, 30);
     connect(
         menu_button, &QPushButton::clicked, this, &Window::handleMenuBtnClick
     );
@@ -37,12 +42,11 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu->setGeometry(0, 0, 100, 600);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, 800, 40), this);
-
     connect(
         sim_controls,
-        SIGNAL(run_simulation(bool)),
+        &SimControls::run_simulation,
         room,
-        SLOT(run_simulation(bool))
+        &Room::run_simulation
     );
 
     // test code
@@ -60,10 +64,11 @@ Window::Window(QWidget *parent) : QWidget(parent) {
 
 void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
-    room_view->resize(QSize(size.width(), size.height() - 40));
-    room->setSceneRect(0, 0, size.width(), size.height() - 40);
+    room_view->resize(QSize(size.width(), size.height() - 40 * 2));
+    room->setSceneRect(0, 0, size.width(), size.height() - 40 * 2);
     menu->resize(menu->width(), size.height());
     sim_controls->relayout(QRect(0, size.height() - 40, size.width(), 40));
+    redit_menu->relayout(QRect(0, 0, size.width(), 40));
 }
 
 void Window::handleMenuBtnClick() {
