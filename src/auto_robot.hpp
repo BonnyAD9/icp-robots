@@ -74,6 +74,10 @@ public:
      */
     virtual void set_speed(qreal speed) override;
 
+    /**
+     * @brief Saves robot to the file
+     * @param file file to save robot into
+     */
     virtual void save(std::ofstream &file) override;
 
     /**
