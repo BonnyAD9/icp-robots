@@ -3,7 +3,7 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
-#include <fstream>
+#include <iostream>
 
 #include <QPointer>
 #include <QTimerEvent>
@@ -127,6 +127,19 @@ Room::Room(QObject *parent) :
     selected(nullptr)
 {
     setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
+    timer = startTimer(TICK_LEN, Qt::PreciseTimer);
+}
+
+Room::Room(string filename, QObject *parent) :
+    QGraphicsScene(parent),
+    obstacles(),
+    timer(0),
+    selected(nullptr)
+{
+    setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
+
+    load(filename);
+
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
 
@@ -301,6 +314,218 @@ void Room::select_obj(SceneObj *o) {
 //---------------------------------------------------------------------------//
 //                                 PRIVATE                                   //
 //---------------------------------------------------------------------------//
+
+void Room::load(string filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        qDebug("Failed to open file");
+        return;
+    }
+
+    while (true) {
+        auto ident = read_ident(file);
+        if (ident == "room") {
+            auto size = read_size(file);
+        } else if (ident == "obstacle") {
+            auto obst = load_obstacle(file);
+            if (obst)
+                add_obstacle(unique_ptr<Obstacle>(obst));
+        } else if (ident == "robot") {
+            auto rob = load_robot(file);
+            if (rob)
+                add_robot(unique_ptr<Robot>(rob));
+        } else if (ident == "auto_robot") {
+            auto rob = load_auto_robot(file);
+            if (rob)
+                add_robot(unique_ptr<Robot>(rob));
+        } else if (ident == "control_robot") {
+            auto rob = load_control_robot(file);
+            if (rob)
+                add_robot(unique_ptr<Robot>(rob));
+        } else {
+            cout << ident << endl;
+            qDebug("Unexpected file content");
+            return;
+        }
+    }
+}
+
+Obstacle *Room::load_obstacle(ifstream &file) {
+    char c;
+    QPointF size, pos;
+    file >> ws >> c;
+    if (isdigit(c)) {
+        file.seekg((int)file.tellg() - 1);
+        size = read_size(file);
+
+        file >> ws >> c;
+        if (c != '[')
+            return nullptr;
+
+        pos = read_pos(file);
+    } else if (c == '[') {
+        pos = read_pos(file);
+        size = read_size(file);
+    } else {
+        return nullptr;
+    }
+
+    auto rect = QRectF(pos.x(), pos.y(), size.x(), size.y());
+    return new Obstacle(rect);
+}
+
+Robot *Room::load_robot(ifstream &file) {
+    char c;
+    qreal speed = 0, angle = -90;
+    QPointF pos;
+    file >> ws >> c;
+    if (c == '[') {
+        pos = read_pos(file);
+
+        file >> ws >> c;
+        if (c != '{')
+            return nullptr;
+
+        while (true) {
+            auto ident = read_ident(file);
+            if (ident == "speed") {
+                file >> ws >> speed;
+            } else if (ident == "angle") {
+                file >> ws >> angle;
+            } else {
+                return nullptr;
+            }
+            file >> ws >> c;
+            if (c == '}')
+                break;
+            if (c == ',')
+                continue;
+
+            return nullptr;
+        }
+    }
+    angle = -angle * M_PI / 180.0;
+    return new Robot(pos, angle, speed);
+}
+
+AutoRobot *Room::load_auto_robot(ifstream &file) {
+    char c;
+    qreal speed = 0, angle = -90, el = 20, el_r = M_PI / M_E, r = M_PI / 4;
+    QPointF pos;
+    file >> ws >> c;
+    if (c == '[') {
+        pos = read_pos(file);
+
+        file >> ws >> c;
+        if (c != '{')
+            return nullptr;
+
+        while (true) {
+            auto ident = read_ident(file);
+            if (ident == "speed") {
+                file >> ws >> speed;
+            } else if (ident == "angle") {
+                file >> ws >> angle;
+            } else if (ident == "elide_distance") {
+                file >> ws >> el;
+            } else if (ident == "elide_rotation") {
+                file >> ws >> el_r;
+            } else if (ident == "rotation_speed") {
+                file >> ws >> r;
+            } else {
+                return nullptr;
+            }
+            file >> ws >> c;
+            if (c == '}')
+                break;
+            if (c == ',')
+                continue;
+
+            return nullptr;
+        }
+    }
+    angle = -angle * M_PI / 180.0;
+    return new AutoRobot(pos, angle, speed, el, el_r, r);
+}
+
+ControlRobot *Room::load_control_robot(ifstream &file) {
+    char c;
+    qreal speed = 0, angle = -90, r = M_PI / 4;
+    QPointF pos;
+    file >> ws >> c;
+    if (c == '[') {
+        pos = read_pos(file);
+
+        file >> ws >> c;
+        if (c != '{')
+            return nullptr;
+
+        while (true) {
+            auto ident = read_ident(file);
+            if (ident == "speed") {
+                file >> ws >> speed;
+            } else if (ident == "angle") {
+                file >> ws >> angle;
+            } else if (ident == "rotation_speed") {
+                file >> ws >> r;
+            } else {
+                return nullptr;
+            }
+            file >> ws >> c;
+            if (c == '}')
+                break;
+            if (c == ',')
+                continue;
+
+            return nullptr;
+        }
+    }
+    angle = -angle * M_PI / 180.0;
+    return new ControlRobot(pos, angle, speed, r);
+}
+
+string Room::read_ident(ifstream &file) {
+    char c;
+    string res = "";
+    file >> ws;
+    while (file.get(c)) {
+        if (c == ':')
+            return res;
+
+        if (!isalpha(c) && c != '_') {
+            return "";
+        }
+
+        res += c;
+    }
+    return "";
+}
+
+QPointF Room::read_size(ifstream &file) {
+    char c;
+    double x, y;
+    file >> x;
+    if (!(file >> ws >> c && c == 'x'))
+        return QPointF(-1, -1);
+
+    file >> ws >> y;
+    return QPointF(x, y);
+}
+
+QPointF Room::read_pos(ifstream &file) {
+    char c;
+    double x, y;
+    file >> x;
+    if (!(file >> ws >> c && c == ','))
+        return QPointF(-1, -1);
+
+    file >> ws >> y;
+
+    if (!(file >> ws >> c && c == ']'))
+        return QPointF(-1, -1);
+
+    return QPointF(x, y);
+}
 
 void Room::tick(qreal delta) {
     move_robots(delta);

@@ -2,12 +2,14 @@
 
 #include <vector>
 #include <memory>
+#include <fstream>
 
 #include <QGraphicsScene>
 
 #include "obstacle.hpp"
 #include "robot.hpp"
 #include "control_robot.hpp"
+#include "auto_robot.hpp"
 
 namespace icp {
 
@@ -23,6 +25,13 @@ public:
      * @param parent The Qt object.
      */
     Room(QObject *parent = nullptr);
+
+    /**
+     * @brief Loads the room from the file
+     * @param filename file to load room from
+     * @param parent parent object
+     */
+    Room(std::string filename, QObject *parent = nullptr);
 
     /**
      * @brief Adds obstacle to the room.
@@ -91,6 +100,18 @@ private slots:
     void select_obj(SceneObj *o);
 
 private:
+    void load(std::string filename);
+
+    Obstacle *load_obstacle(std::ifstream &file);
+    Robot *load_robot(std::ifstream &file);
+    AutoRobot *load_auto_robot(std::ifstream &file);
+    ControlRobot *load_control_robot(std::ifstream &file);
+
+    std::string read_ident(std::ifstream &file);
+    QPointF read_size(std::ifstream &file);
+    QPointF read_pos(std::ifstream &file);
+    qreal read_num(std::ifstream &file);
+
     void tick(qreal delta);
     void move_robots(qreal delta);
     void border_collision(Robot *rob);

@@ -19,8 +19,10 @@ using namespace std;
 Window::Window(QWidget *parent) : QWidget(parent) {
     setGeometry(0, 0, 900, 600);
 
-    room = new Room();
+    // room = new Room();
+    room = new Room("test.txt");
     room->setSceneRect(0, 40, width(), 600 - 40 * 2);
+
 
     room_view = new QGraphicsView(room, this);
     room_view->setGeometry(0, 40, width(), 600 - 40 * 2);
@@ -69,16 +71,16 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     );
 
     // test code
-    room->add_obstacle(unique_ptr<Obstacle>(
-        new Obstacle(QRectF(100, 200, 60, 60))
-    ));
-    room->add_obstacle(unique_ptr<Obstacle>(
-        new Obstacle(QRectF(400, 50, 60, 450))
-    ));
+    // room->add_obstacle(unique_ptr<Obstacle>(
+    //     new Obstacle(QRectF(100, 200, 60, 60))
+    // ));
+    // room->add_obstacle(unique_ptr<Obstacle>(
+    //     new Obstacle(QRectF(400, 50, 60, 450))
+    // ));
 
-    room->add_robot(unique_ptr<Robot>(new AutoRobot(QPoint(200, 100))));
+    // room->add_robot(unique_ptr<Robot>(new AutoRobot(QPoint(200, 100))));
 
-    room->add_robot(unique_ptr<Robot>(new Robot(QPoint(201, 200), 0, 0)));
+    // room->add_robot(unique_ptr<Robot>(new Robot(QPoint(201, 200), 0, 0)));
 }
 
 //---------------------------------------------------------------------------//

@@ -3,6 +3,7 @@
 #include <QRectF>
 #include <QGraphicsRectItem>
 #include <QCursor>
+#include <fstream>
 
 #include "scene_obj.hpp"
 
