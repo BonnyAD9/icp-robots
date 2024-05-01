@@ -38,7 +38,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu_button->setGeometry(5, 45, 54, 30);
     connect(menu_button, &QPushButton::clicked, this, &Window::show_menu);
 
-    menu = new Menu(this);
+    menu = new Menu(QSize(800, 600 - 40 * 2), this);
     menu->setGeometry(0, 40, 800, 600 - 40 * 2);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);
@@ -55,7 +55,8 @@ void Window::resizeEvent(QResizeEvent *event) {
     auto size = event->size();
     room_view->resize(QSize(size.width(), size.height() - 40 * 2));
     room->setSceneRect(0, 0, size.width(), size.height() - 40 * 2);
-    menu->resize(menu->width(), size.height());
+    menu->relayout(QSize(size.width(), size.height() - 40 * 2));
+    menu->resize(size.width(), size.height() - 40 * 2);
     sim_controls->relayout(QRect(0, size.height() - 40, size.width(), 40));
     redit_menu->relayout(QRect(0, 0, size.width(), 40));
 }
