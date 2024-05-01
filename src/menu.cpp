@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QCursor>
 
+#include <iostream>
+
 #include "auto_robot.hpp"
 
 namespace icp {
@@ -35,6 +37,13 @@ ObstacleButton::ObstacleButton(
         Qt::PenJoinStyle::SvgMiterJoin
     ));
     setAcceptHoverEvents(true);
+}
+
+void ObstacleButton::move(QPointF position) {
+    pos = position;
+    auto rec = rect();
+    rec.moveTopLeft(position);
+    setRect(rec.normalized());
 }
 
 //---------------------------------------------------------------------------//
@@ -100,6 +109,19 @@ RobotButton::RobotButton(
     eye->setRect(e);
 }
 
+void RobotButton::move(QPointF position) {
+    pos = position;
+    auto rec = rect();
+    rec.moveTopLeft(position);
+    setRect(rec.normalized());
+
+    auto e = eye->rect();
+    e.moveCenter(
+        rect().center() + QPointF(0, 1) * (ROBOT_D / 3)
+    );
+    eye->setRect(e);
+}
+
 //---------------------------------------------------------------------------//
 //                                 PROTECTED                                 //
 //---------------------------------------------------------------------------//
@@ -116,6 +138,12 @@ void RobotButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     auto rec = rect();
     rec.moveTopLeft(rec.topLeft() + delta);
     setRect(rec.normalized());
+
+    auto e = eye->rect();
+    e.moveCenter(
+        rect().center() + QPointF(0, 1) * (ROBOT_D / 3)
+    );
+    eye->setRect(e);
 }
 
 void RobotButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
@@ -123,8 +151,7 @@ void RobotButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         ungrabMouse();
         auto rec = rect();
         emit add_robot(rec.topLeft());
-        rec.moveTopLeft(pos);
-        setRect(rec);
+        move(pos);
     }
 }
 
@@ -140,16 +167,16 @@ void RobotButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
 
-Menu::Menu(QWidget *parent) : QWidget(parent) {
+Menu::Menu(QSize size, QWidget *parent) : QWidget(parent) {
     setVisible(false);
     auto pal = QPalette();
     pal.setColor(QPalette::Window, QColor(0xff, 0xff, 0xff));
     pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
 
     button_scene = new QGraphicsScene(this);
-    button_scene->setSceneRect(0, 0, 800, 600 - 40 * 2);
 
-    button_scene->addItem(new ObstacleButton(QRectF(20, 190, 60, 60)));
+    obstacle_ghost = new ObstacleButton(QRectF(20, 190, 60, 60));
+    button_scene->addItem(obstacle_ghost);
     obstacle_btn = new ObstacleButton(QRectF(20, 190, 60, 60));
     connect(
         obstacle_btn, SIGNAL(add_obstacle(QRectF)),
@@ -157,7 +184,8 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     );
     button_scene->addItem(obstacle_btn);
 
-    button_scene->addItem(new RobotButton(QPoint(25, 270)));
+    robot_ghost = new RobotButton(QPoint(25, 270));
+    button_scene->addItem(robot_ghost);
     robot_btn = new RobotButton(QPoint(25, 270));
     connect(
         robot_btn, SIGNAL(add_robot(QPointF)),
@@ -166,7 +194,6 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     button_scene->addItem(robot_btn);
 
     button_view = new QGraphicsView(button_scene, this);
-    button_view->setGeometry(0, 0, 800, 600 - 40 * 2);
     button_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     button_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     button_view->setFrameStyle(QFrame::NoFrame);
@@ -176,8 +203,22 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     button_view->setPalette(pal);
 
     close_btn = new QPushButton("close", this);
-    close_btn->setGeometry(5, 5, 54, 30);
     connect(close_btn, &QPushButton::clicked, this, &Menu::handle_close_btn);
+
+    relayout(size);
+}
+
+void Menu::relayout(QSize size) {
+    button_scene->setSceneRect(0, 0, size.width(), size.height());
+    button_view->setGeometry(0, 0, size.width(), size.height());
+    close_btn->setGeometry(5, 5, 54, 30);
+
+    auto mid = (size.height() - 40) / 2;
+    obstacle_ghost->move(QPointF(20, mid - 30));
+    obstacle_btn->move(QPointF(20, mid - 30));
+
+    robot_ghost->move(QPointF(25, mid + 50));
+    robot_btn->move(QPointF(25, mid + 50));
 }
 
 //---------------------------------------------------------------------------//
@@ -186,7 +227,7 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
 
 void Menu::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
-    painter.fillRect(QRect(0, 0, 100, 600 - 40 * 2), QColor(0x40, 0x40, 0x40));
+    painter.fillRect(QRect(0, 0, 100, height()), QColor(0x40, 0x40, 0x40));
 }
 
 void Menu::mousePressEvent(QMouseEvent *e) {

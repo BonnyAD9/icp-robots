@@ -1,0 +1,15 @@
+room: 900x520
+obstacle: 33x279 [123, 110]
+obstacle: 36x279 [224, 109]
+obstacle: 62x33 [269, 109]
+obstacle: 60x31 [269, 356]
+obstacle: 27x60 [340, 109]
+obstacle: 24x60 [337, 327]
+obstacle: 29x278 [418, 108]
+obstacle: 60x30 [456, 108]
+obstacle: 60x27 [455, 219]
+obstacle: 24x137 [524, 108]
+control_robot: [590, 339.6] { speed: 20, rotation_speed: 1.15573, angle: 90 }
+auto_robot: [765, 97] { speed: 20, rotation_speed: 0.785398, elide_distance: 20, elide_rotation: 1.15573, angle: -90 }
+auto_robot: [295, 224] { speed: 20, rotation_speed: 0.785398, elide_distance: 20, elide_rotation: 1.15573, angle: -90 }
+robot: [36, 431] { speed: 20, angle: -0 }

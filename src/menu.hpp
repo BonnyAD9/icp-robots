@@ -29,6 +29,12 @@ public:
      */
     explicit ObstacleButton(QRectF hitbox,QGraphicsItem *parent = nullptr);
 
+    /**
+     * @brief Moves obstacle button
+     * @param pos new position of the button
+     */
+    void move(QPointF position);
+
 signals:
     /**
      * @brief Signal to add obstacle with given rectangle
@@ -61,6 +67,12 @@ public:
      */
     explicit RobotButton(QPoint pos, QGraphicsItem *parent = nullptr);
 
+    /**
+     * @brief Moves robot button
+     * @param pos new position of the button
+     */
+    void move(QPointF position);
+
 signals:
     /**
      * @brief Signal to add obstacle with given rectangle
@@ -89,9 +101,16 @@ class Menu : public QWidget {
 public:
     /**
      * @brief Creates new menu
+     * @param size available size
      * @param parent Parent widget
      */
-    explicit Menu(QWidget *parent = nullptr);
+    explicit Menu(QSize size, QWidget *parent = nullptr);
+
+    /**
+     * @brief Updates the layout of the widget
+     * @param size new available size
+     */
+    void relayout(QSize size);
 
 signals:
     /**
@@ -120,7 +139,11 @@ private:
     QPointer<QPushButton> close_btn;
     QPointer<QGraphicsScene> button_scene;
     QPointer<QGraphicsView> button_view;
+
+    ObstacleButton *obstacle_ghost;
     ObstacleButton *obstacle_btn;
+
+    RobotButton *robot_ghost;
     RobotButton *robot_btn;
 };
 

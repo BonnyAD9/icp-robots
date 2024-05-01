@@ -3,10 +3,15 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include <QPointer>
 #include <QTimerEvent>
 #include <QKeyEvent>
+#include <QMessageBox>
+
+#include "auto_robot.hpp"
+#include "control_robot.hpp"
 
 namespace icp {
 
@@ -211,13 +216,33 @@ void Room::change_robot(Robot *old, Robot *replace) {
 
 void Room::add_obstacle_slot(Obstacle *obstacle) {
     add_obstacle(unique_ptr<Obstacle>(obstacle));
-    // addItem(obstacle);
-    // obstacle->start_drag();
-    // obstacles.push_back(obstacle);
 }
 
 void Room::add_robot_slot(Robot *robot) {
     add_robot(unique_ptr<Robot>(robot));
+}
+
+void Room::save(string filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        QMessageBox::critical(
+            nullptr,
+            "Error saving room", "File cannot be accessed"
+        );
+        return;
+    }
+
+    file << "room: " << width() << "x" << height() << endl;
+    for (auto obst : obstacles) {
+        file << "obstacle: " << obst->rect().width() << "x"
+            << obst->rect().height() << " [" << obst->rect().x() << ", "
+            << obst->rect().y() << "]" << endl;
+    }
+
+    for (auto rob : robots) {
+        rob->save(file);
+    }
+    file.close();
 }
 
 //---------------------------------------------------------------------------//
@@ -230,7 +255,7 @@ void Room::timerEvent(QTimerEvent *event) {
 
 void Room::keyPressEvent(QKeyEvent *event) {
     auto robot = dynamic_cast<ControlRobot *>(selected);
-    if (!robot)
+    if (!robot || timer == 0)
         return;
 
     switch (event->key()) {
@@ -248,7 +273,7 @@ void Room::keyPressEvent(QKeyEvent *event) {
 
 void Room::keyReleaseEvent(QKeyEvent *event) {
     auto robot = dynamic_cast<ControlRobot *>(selected);
-    if (!robot)
+    if (!robot || timer == 0)
         return;
 
     switch (event->key()) {

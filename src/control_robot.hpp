@@ -62,6 +62,8 @@ public:
      */
     virtual void set_speed(qreal speed) override;
 
+    virtual void save(std::ofstream &file) override;
+
     /**
      * @brief Gets rotation speed of the robot
      */

@@ -2,12 +2,14 @@
 
 #include <vector>
 #include <memory>
+#include <fstream>
 
 #include <QGraphicsScene>
 
 #include "obstacle.hpp"
 #include "robot.hpp"
 #include "control_robot.hpp"
+#include "auto_robot.hpp"
 
 namespace icp {
 
@@ -74,6 +76,12 @@ public slots:
      * @param robot robot to be added to room
      */
     void add_robot_slot(Robot *robot);
+
+    /**
+     * @brief Saves room
+     * @param filename file to save the room into
+     */
+    void save(std::string filename);
 
 protected:
     void timerEvent(QTimerEvent *event) override;

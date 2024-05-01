@@ -8,6 +8,8 @@
 
 namespace icp {
 
+using namespace std;
+
 constexpr qreal BORDER_THICKNESS = 6;
 
 constexpr Obstacle::State operator|(
