@@ -28,6 +28,11 @@ public:
      */
     void relayout(QRect rect);
 
+    /**
+     * @brief Returns whether simulation is playing
+     */
+    bool playing();
+
 signals:
     /**
      * @brief Play/Pause button was pressed.

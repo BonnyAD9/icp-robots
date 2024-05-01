@@ -97,7 +97,7 @@ void ControlRobot::save(ofstream &file) {
     }
 
     file << "control_robot: [" << rect().x() << ", " << rect().y()
-        << "] { speed: " << sspeed << ", rotation_speed: " << rot_speed
+        << "] { speed: " << speed() << ", rotation_speed: " << rot_speed
         << ", angle: " << ang << " }" << endl;
 }
 

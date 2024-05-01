@@ -120,7 +120,7 @@ void AutoRobot::save(ofstream &file) {
     }
 
     file << "auto_robot: [" << rect().x() << ", " << rect().y()
-        << "] { speed: " << sspeed << ", rotation_speed: " << rot_speed
+        << "] { speed: " << speed() << ", rotation_speed: " << rot_speed
         << ", elide_distance: " << elide_dist << ", elide_rotation: "
         << elide_rot << ", angle: " << ang << " }" << endl;
 }

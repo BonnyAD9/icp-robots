@@ -4,6 +4,7 @@
 
 #include <QGraphicsView>
 #include <QResizeEvent>
+#include <QMessageBox>
 
 #include "obstacle.hpp"
 #include "auto_robot.hpp"
@@ -19,8 +20,7 @@ using namespace std;
 Window::Window(QWidget *parent) : QWidget(parent) {
     setGeometry(0, 0, 900, 600);
 
-    // room = new Room();
-    room = new Room("test.txt");
+    room = new Room();
     room->setSceneRect(0, 40, width(), 600 - 40 * 2);
 
 
@@ -93,12 +93,15 @@ void Window::show_menu() {
 }
 
 void Window::load(std::string filename) {
-    room = new Room(filename);
+    Room *new_room;
+    try {
+        new_room = new Room(filename);
+    } catch (const exception &e) {
+        QMessageBox::critical(nullptr, "Error loading room", e.what());
+        return;
+    }
+    room = new_room;
     room->setSceneRect(0, 0, width(), height() - 40 * 2);
-
-    connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
-    connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
-    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
 
     connect(
         sim_controls,
@@ -107,6 +110,11 @@ void Window::load(std::string filename) {
         &Room::run_simulation
     );
     connect(sim_controls, &SimControls::save_room, room, &Room::save);
+    room->run_simulation(sim_controls->playing());
+
+    connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
+    connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
+    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
 
     connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
     connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);

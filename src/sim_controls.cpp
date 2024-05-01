@@ -41,6 +41,10 @@ void SimControls::relayout(QRect rect) {
     setGeometry(rect);
 }
 
+bool SimControls::playing() {
+    return is_playing;
+}
+
 //---------------------------------------------------------------------------//
 //                              PRIVATE SLOTS                                //
 //---------------------------------------------------------------------------//
@@ -52,7 +56,7 @@ void SimControls::handle_play_pause(bool checked) {
 }
 
 void SimControls::handle_save() {
-    emit save_room("test.txt");
+    emit save_room(path_input->text().toStdString());
 }
 
 void SimControls::handle_load() {

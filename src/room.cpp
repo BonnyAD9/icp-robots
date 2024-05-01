@@ -318,12 +318,14 @@ void Room::select_obj(SceneObj *o) {
 void Room::load(string filename) {
     ifstream file(filename);
     if (!file.is_open()) {
-        qDebug("Failed to open file");
-        return;
+        throw runtime_error("File cannot be accessed");
     }
 
     while (true) {
         auto ident = read_ident(file);
+        if (ident == "")
+            return;
+
         if (ident == "room") {
             auto size = read_size(file);
         } else if (ident == "obstacle") {
@@ -343,9 +345,7 @@ void Room::load(string filename) {
             if (rob)
                 add_robot(unique_ptr<Robot>(rob));
         } else {
-            cout << ident << endl;
-            qDebug("Unexpected file content");
-            return;
+            throw runtime_error("Unexpected identifier: '" + ident + "'");
         }
     }
 }
@@ -498,7 +498,9 @@ string Room::read_ident(ifstream &file) {
 
         res += c;
     }
-    return "";
+    if (res == "")
+        return res;
+    throw runtime_error("Identifier must be followed by ':'");
 }
 
 QPointF Room::read_size(ifstream &file) {
@@ -506,7 +508,7 @@ QPointF Room::read_size(ifstream &file) {
     double x, y;
     file >> x;
     if (!(file >> ws >> c && c == 'x'))
-        return QPointF(-1, -1);
+        throw runtime_error("Invalid character in size");
 
     file >> ws >> y;
     return QPointF(x, y);
@@ -517,12 +519,12 @@ QPointF Room::read_pos(ifstream &file) {
     double x, y;
     file >> x;
     if (!(file >> ws >> c && c == ','))
-        return QPointF(-1, -1);
+        throw runtime_error("Invalid character in position");
 
     file >> ws >> y;
 
     if (!(file >> ws >> c && c == ']'))
-        return QPointF(-1, -1);
+        throw runtime_error("Unclosed position");
 
     return QPointF(x, y);
 }
