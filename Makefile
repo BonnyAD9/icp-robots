@@ -2,6 +2,8 @@
 BUILD_TYPE=Debug
 PARALEL=-j $(shell nproc)
 
+ARCHIVE=xsleza26-xstigl00.tar.gz
+
 .PHONY: build
 build:
 	if [ ! -f build/Makefile ]; then \
@@ -19,6 +21,10 @@ run: build
 doxygen:
 	doxygen
 
+.PHONY: pack
+pack:
+	tar czf $(ARCHIVE) -- src/* Doxyfile Makefile README.txt
+
 .PHONY: clean
 clean:
-	-rm -r build doc
+	-rm -r build doc $(ARCHIVE)
