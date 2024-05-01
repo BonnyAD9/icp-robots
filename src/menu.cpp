@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QCursor>
 
+#include <iostream>
+
 #include "auto_robot.hpp"
 
 namespace icp {
@@ -225,7 +227,7 @@ void Menu::relayout(QSize size) {
 
 void Menu::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
-    painter.fillRect(QRect(0, 0, 100, 600 - 40 * 2), QColor(0x40, 0x40, 0x40));
+    painter.fillRect(QRect(0, 0, 100, height()), QColor(0x40, 0x40, 0x40));
 }
 
 void Menu::mousePressEvent(QMouseEvent *e) {
