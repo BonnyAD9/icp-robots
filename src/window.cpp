@@ -34,9 +34,6 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     );
 
     redit_menu = new ReditMenu(QRect(0, 0, width(), 40), this);
-    connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_obj);
-    connect(redit_menu, &ReditMenu::remove_obj, room, &Room::remove_obj);
-    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 45, 54, 30);
@@ -46,29 +43,9 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     menu->setGeometry(0, 40, 800, 600 - 40 * 2);
 
     sim_controls = new SimControls(QRect(0, 600 - 40, width(), 40), this);
-    connect(
-        sim_controls,
-        &SimControls::run_simulation,
-        room,
-        &Room::run_simulation
-    );
-    connect(sim_controls, &SimControls::save_room, room, &Room::save);
     connect(sim_controls, &SimControls::load_room, this, &Window::load);
 
-    connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
-    connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
-
-    // test code
-    // room->add_obstacle(unique_ptr<Obstacle>(
-    //     new Obstacle(QRectF(100, 200, 60, 60))
-    // ));
-    // room->add_obstacle(unique_ptr<Obstacle>(
-    //     new Obstacle(QRectF(400, 50, 60, 450))
-    // ));
-
-    // room->add_robot(unique_ptr<Robot>(new AutoRobot(QPoint(200, 100))));
-
-    // room->add_robot(unique_ptr<Robot>(new Robot(QPoint(201, 200), 0, 0)));
+    room_listeners();
 }
 
 //---------------------------------------------------------------------------//
@@ -102,7 +79,24 @@ void Window::load(std::string filename) {
     }
     room = new_room;
     room->setSceneRect(0, 0, width(), height() - 40 * 2);
+    room->run_simulation(sim_controls->playing());
 
+    room_listeners();
+
+    room_view->setScene(room);
+}
+
+void Window::handle_resize(QPointF size) {
+    qDebug("resize");
+    resize(size.x(), size.y());
+}
+
+
+//---------------------------------------------------------------------------//
+//                                  PRIVATE                                  //
+//---------------------------------------------------------------------------//
+
+void Window::room_listeners() {
     connect(
         sim_controls,
         &SimControls::run_simulation,
@@ -110,7 +104,6 @@ void Window::load(std::string filename) {
         &Room::run_simulation
     );
     connect(sim_controls, &SimControls::save_room, room, &Room::save);
-    room->run_simulation(sim_controls->playing());
 
     connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
     connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
@@ -119,7 +112,7 @@ void Window::load(std::string filename) {
     connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
     connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
 
-    room_view->setScene(room);
+    connect(room, &Room::resize, this, &Window::handle_resize);
 }
 
 } // namespace icp

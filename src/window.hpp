@@ -30,8 +30,11 @@ private slots:
     void show_menu();
 
     void load(std::string filename);
+    void handle_resize(QPointF size);
 
 private:
+    void room_listeners();
+
     QPointer<QPushButton> menu_button;
     QPointer<Menu> menu;
     QPointer<QGraphicsView> room_view;

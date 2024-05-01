@@ -140,7 +140,7 @@ void Robot::save(ofstream &file) {
         ang += 360;
     }
 
-    file << "robot: [" << rect().x() << ", " << rect().y() << "] { speed: "
+    file << "robot: [" << hitbox().x() << ", " << hitbox().y() << "] { speed: "
         << mspeed << ", angle: " << ang << " }" << endl;
 }
 

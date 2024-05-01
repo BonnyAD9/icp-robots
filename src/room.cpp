@@ -327,7 +327,7 @@ void Room::load(string filename) {
             return;
 
         if (ident == "room") {
-            auto size = read_size(file);
+            emit resize(read_size(file));
         } else if (ident == "obstacle") {
             add_obstacle(unique_ptr<Obstacle>(load_obstacle(file)));
         } else if (ident == "robot") {
@@ -363,7 +363,9 @@ Obstacle *Room::load_obstacle(ifstream &file) {
     }
 
     auto rect = QRectF(pos.x(), pos.y(), size.x(), size.y());
-    return new Obstacle(rect);
+    auto obst = new Obstacle(rect);
+    obst->set_hitbox(rect);
+    return obst;
 }
 
 Robot *Room::load_robot(ifstream &file) {
@@ -400,7 +402,9 @@ Robot *Room::load_robot(ifstream &file) {
         }
     }
     angle = -angle * M_PI / 180.0;
-    return new Robot(pos, angle, speed);
+    auto rob = new Robot(pos, angle, speed);
+    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
+    return rob;
 }
 
 AutoRobot *Room::load_auto_robot(ifstream &file) {
@@ -443,7 +447,9 @@ AutoRobot *Room::load_auto_robot(ifstream &file) {
         }
     }
     angle = -angle * M_PI / 180.0;
-    return new AutoRobot(pos, angle, speed, el, el_r, r);
+    auto rob = new AutoRobot(pos, angle, speed, el, el_r, r);
+    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
+    return rob;
 }
 
 ControlRobot *Room::load_control_robot(ifstream &file) {
@@ -482,7 +488,9 @@ ControlRobot *Room::load_control_robot(ifstream &file) {
         }
     }
     angle = -angle * M_PI / 180.0;
-    return new ControlRobot(pos, angle, speed, r);
+    auto rob = new ControlRobot(pos, angle, speed, r);
+    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
+    return rob;
 }
 
 string Room::read_ident(ifstream &file) {
@@ -490,16 +498,13 @@ string Room::read_ident(ifstream &file) {
     string res = "";
     file >> ws;
     while (file.get(c)) {
-        if (c == ':')
-            return res;
-
-        if (!isalpha(c) && c != '_') {
-            throw runtime_error("Invalid character in indentifier");
-        }
+        if (!isalpha(c) && c != '_')
+            break;
 
         res += c;
     }
-    if (res == "")
+
+    if (c == ':' || (c == ' ' && file >> ws >> c && c == ':') || res == "")
         return res;
     throw runtime_error("Identifier must be followed by ':'");
 }

@@ -119,7 +119,7 @@ void AutoRobot::save(ofstream &file) {
         ang += 360;
     }
 
-    file << "auto_robot: [" << rect().x() << ", " << rect().y()
+    file << "auto_robot: [" << hitbox().x() << ", " << hitbox().y()
         << "] { speed: " << speed() << ", rotation_speed: " << rot_speed
         << ", elide_distance: " << elide_dist << ", elide_rotation: "
         << elide_rot << ", angle: " << ang << " }" << endl;

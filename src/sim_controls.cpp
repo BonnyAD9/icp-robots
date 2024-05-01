@@ -28,10 +28,9 @@ SimControls::SimControls(QRect rect, QWidget *parent)
         &SimControls::handle_play_pause
     );
 
-    layout->addWidget(path_input);
+    layout->addWidget(path_input, 1);
     layout->addWidget(save);
     layout->addWidget(load);
-    layout->addStretch(1);
     layout->addWidget(play_pause);
 
     relayout(rect);

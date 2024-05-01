@@ -52,6 +52,12 @@ signals:
      */
     void new_selection(SceneObj *o);
 
+    /**
+     * @brief Signal for window resize
+     * @param size new size of the window
+     */
+    void resize(QPointF size);
+
 public slots:
     /**
      * @brief Play/pause the simulation.
