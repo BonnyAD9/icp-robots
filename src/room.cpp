@@ -8,6 +8,7 @@
 #include <QPointer>
 #include <QTimerEvent>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 #include "auto_robot.hpp"
 #include "control_robot.hpp"
@@ -224,7 +225,10 @@ void Room::add_robot_slot(Robot *robot) {
 void Room::save(string filename) {
     ofstream file(filename);
     if (!file.is_open()) {
-        qDebug("Unable to open file");
+        QMessageBox::critical(
+            nullptr,
+            "Error saving room", "File cannot be accessed"
+        );
         return;
     }
 
@@ -238,6 +242,7 @@ void Room::save(string filename) {
     for (auto rob : robots) {
         rob->save(file);
     }
+    file.close();
 }
 
 //---------------------------------------------------------------------------//
