@@ -399,7 +399,7 @@ void Room::robot_collision(Robot *r1, Robot *r2) {
         return;
     }
 
-    dir = dir * (over / (2 * dir_len));
+    dir = dir_len == 0 ? QPointF(0, 0) : dir * (over / (2 * dir_len));
     c1.moveTopLeft(c1.topLeft() - dir);
     c2.moveTopLeft(c2.topLeft() + dir);
     r1->set_hitbox(c1);
