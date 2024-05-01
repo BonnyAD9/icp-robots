@@ -8,6 +8,7 @@
 #include "room.hpp"
 #include "sim_controls.hpp"
 #include "redit_menu.hpp"
+#include "loader.hpp"
 
 namespace icp {
 
@@ -30,7 +31,6 @@ private slots:
     void show_menu();
 
     void load(std::string filename);
-    void handle_resize(QPointF size);
 
 private:
     void room_listeners();

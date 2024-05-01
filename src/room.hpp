@@ -27,13 +27,6 @@ public:
     Room(QObject *parent = nullptr);
 
     /**
-     * @brief Loads the room from the file
-     * @param filename file to load room from
-     * @param parent parent object
-     */
-    Room(std::string filename, QObject *parent = nullptr);
-
-    /**
      * @brief Adds obstacle to the room.
      * @param obstacle Obstacle to add to the room.
      */
@@ -51,12 +44,6 @@ signals:
      * @param o new selected object
      */
     void new_selection(SceneObj *o);
-
-    /**
-     * @brief Signal for window resize
-     * @param size new size of the window
-     */
-    void win_resize(QPointF size);
 
 public slots:
     /**
@@ -106,18 +93,6 @@ private slots:
     void select_obj(SceneObj *o);
 
 private:
-    void load(std::string filename);
-
-    Obstacle *load_obstacle(std::ifstream &file);
-    Robot *load_robot(std::ifstream &file);
-    AutoRobot *load_auto_robot(std::ifstream &file);
-    ControlRobot *load_control_robot(std::ifstream &file);
-
-    std::string read_ident(std::ifstream &file);
-    QPointF read_size(std::ifstream &file);
-    QPointF read_pos(std::ifstream &file);
-    qreal read_num(std::ifstream &file);
-
     void tick(qreal delta);
     void move_robots(qreal delta);
     void border_collision(Robot *rob);

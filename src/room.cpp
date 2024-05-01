@@ -130,19 +130,6 @@ Room::Room(QObject *parent) :
     timer = startTimer(TICK_LEN, Qt::PreciseTimer);
 }
 
-Room::Room(string filename, QObject *parent) :
-    QGraphicsScene(parent),
-    obstacles(),
-    timer(0),
-    selected(nullptr)
-{
-    setBackgroundBrush(QBrush(QColor(0x22, 0x22, 0x22)));
-
-    load(filename);
-
-    timer = startTimer(TICK_LEN, Qt::PreciseTimer);
-}
-
 void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
     Obstacle *obst = obstacle.release();
     addItem(obst);
@@ -263,7 +250,7 @@ void Room::timerEvent(QTimerEvent *event) {
 
 void Room::keyPressEvent(QKeyEvent *event) {
     auto robot = dynamic_cast<ControlRobot *>(selected);
-    if (!robot)
+    if (!robot || timer == 0)
         return;
 
     switch (event->key()) {
@@ -281,7 +268,7 @@ void Room::keyPressEvent(QKeyEvent *event) {
 
 void Room::keyReleaseEvent(QKeyEvent *event) {
     auto robot = dynamic_cast<ControlRobot *>(selected);
-    if (!robot)
+    if (!robot || timer == 0)
         return;
 
     switch (event->key()) {
@@ -314,226 +301,6 @@ void Room::select_obj(SceneObj *o) {
 //---------------------------------------------------------------------------//
 //                                 PRIVATE                                   //
 //---------------------------------------------------------------------------//
-
-void Room::load(string filename) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        throw runtime_error("File cannot be accessed");
-    }
-
-    while (true) {
-        auto ident = read_ident(file);
-        if (ident == "")
-            return;
-
-        if (ident == "room") {
-            emit win_resize(read_size(file));
-        } else if (ident == "obstacle") {
-            add_obstacle(unique_ptr<Obstacle>(load_obstacle(file)));
-        } else if (ident == "robot") {
-            add_robot(unique_ptr<Robot>(load_robot(file)));
-        } else if (ident == "auto_robot") {
-            add_robot(unique_ptr<Robot>(load_auto_robot(file)));
-        } else if (ident == "control_robot") {
-            add_robot(unique_ptr<Robot>(load_control_robot(file)));
-        } else {
-            throw runtime_error("Unexpected identifier: '" + ident + "'");
-        }
-    }
-}
-
-Obstacle *Room::load_obstacle(ifstream &file) {
-    char c;
-    QPointF size, pos;
-    file >> ws >> c;
-    if (isdigit(c)) {
-        file.seekg((int)file.tellg() - 1);
-        size = read_size(file);
-
-        file >> ws >> c;
-        if (c != '[')
-            throw runtime_error("Position expected");
-
-        pos = read_pos(file);
-    } else if (c == '[') {
-        pos = read_pos(file);
-        size = read_size(file);
-    } else {
-        throw runtime_error("Position expected");
-    }
-
-    auto rect = QRectF(pos.x(), pos.y(), size.x(), size.y());
-    auto obst = new Obstacle(rect);
-    obst->set_hitbox(rect);
-    return obst;
-}
-
-Robot *Room::load_robot(ifstream &file) {
-    char c;
-    qreal speed = 0, angle = -90;
-    QPointF pos;
-    file >> ws >> c;
-    if (c == '[') {
-        pos = read_pos(file);
-
-        file >> ws >> c;
-        if (c == '{') {
-            while (true) {
-                auto ident = read_ident(file);
-                if (ident == "speed") {
-                    file >> ws >> speed;
-                } else if (ident == "angle") {
-                    file >> ws >> angle;
-                } else {
-                    throw runtime_error(
-                        "Unexpected robot attribute: '" + ident + "'"
-                    );
-                }
-                file >> ws >> c;
-                if (c == '}')
-                    break;
-                if (c == ',')
-                    continue;
-
-                throw runtime_error("Unexpected character");
-            }
-        } else {
-            file.seekg((int)file.tellg() - 1);
-        }
-    }
-    angle = -angle * M_PI / 180.0;
-    auto rob = new Robot(pos, angle, speed);
-    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
-    return rob;
-}
-
-AutoRobot *Room::load_auto_robot(ifstream &file) {
-    char c;
-    qreal speed = 0, angle = -90, el = 20, el_r = M_PI / M_E, r = M_PI / 4;
-    QPointF pos;
-    file >> ws >> c;
-    if (c == '[') {
-        pos = read_pos(file);
-
-        file >> ws >> c;
-        if (c == '{') {
-            while (true) {
-                auto ident = read_ident(file);
-                if (ident == "speed") {
-                    file >> ws >> speed;
-                } else if (ident == "angle") {
-                    file >> ws >> angle;
-                } else if (ident == "elide_distance") {
-                    file >> ws >> el;
-                } else if (ident == "elide_rotation") {
-                    file >> ws >> el_r;
-                } else if (ident == "rotation_speed") {
-                    file >> ws >> r;
-                } else {
-                    throw runtime_error(
-                        "Unexpected robot attribute: '" + ident + "'"
-                    );
-                }
-                file >> ws >> c;
-                if (c == '}')
-                    break;
-                if (c == ',')
-                    continue;
-
-                throw runtime_error("Unexpected character");
-            }
-        } else {
-            file.seekg((int)file.tellg() - 1);
-        }
-    }
-    angle = -angle * M_PI / 180.0;
-    auto rob = new AutoRobot(pos, angle, speed, el, el_r, r);
-    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
-    return rob;
-}
-
-ControlRobot *Room::load_control_robot(ifstream &file) {
-    char c;
-    qreal speed = 0, angle = -90, r = M_PI / 4;
-    QPointF pos;
-    file >> ws >> c;
-    if (c == '[') {
-        pos = read_pos(file);
-
-        file >> ws >> c;
-        if (c == '{') {
-            while (true) {
-                auto ident = read_ident(file);
-                if (ident == "speed") {
-                    file >> ws >> speed;
-                } else if (ident == "angle") {
-                    file >> ws >> angle;
-                } else if (ident == "rotation_speed") {
-                    file >> ws >> r;
-                } else {
-                    throw runtime_error(
-                        "Unexpected robot attribute: '" + ident + "'"
-                    );
-                }
-                file >> ws >> c;
-                if (c == '}')
-                    break;
-                if (c == ',')
-                    continue;
-
-                throw runtime_error("Unexpected character");
-            }
-        } else {
-            file.seekg((int)file.tellg() - 1);
-        }
-    }
-    angle = -angle * M_PI / 180.0;
-    auto rob = new ControlRobot(pos, angle, speed, r);
-    rob->set_hitbox(QRectF(pos, QPointF(0, 0)));
-    return rob;
-}
-
-string Room::read_ident(ifstream &file) {
-    char c;
-    string res = "";
-    file >> ws;
-    while (file.get(c)) {
-        if (!isalpha(c) && c != '_')
-            break;
-
-        res += c;
-    }
-
-    if (c == ':' || (c == ' ' && file >> ws >> c && c == ':') || res == "")
-        return res;
-    throw runtime_error("Identifier must be followed by ':'");
-}
-
-QPointF Room::read_size(ifstream &file) {
-    char c;
-    double x, y;
-    file >> x;
-    if (!(file >> ws >> c && c == 'x'))
-        throw runtime_error("Invalid character in size");
-
-    file >> ws >> y;
-    return QPointF(x, y);
-}
-
-QPointF Room::read_pos(ifstream &file) {
-    char c;
-    double x, y;
-    file >> x;
-    if (!(file >> ws >> c && c == ','))
-        throw runtime_error("Invalid character in position");
-
-    file >> ws >> y;
-
-    if (!(file >> ws >> c && c == ']'))
-        throw runtime_error("Unclosed position");
-
-    return QPointF(x, y);
-}
 
 void Room::tick(qreal delta) {
     move_robots(delta);

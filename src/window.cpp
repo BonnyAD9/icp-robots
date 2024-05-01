@@ -23,7 +23,6 @@ Window::Window(QWidget *parent) : QWidget(parent) {
     room = new Room();
     room->setSceneRect(0, 40, width(), 600 - 40 * 2);
 
-
     room_view = new QGraphicsView(room, this);
     room_view->setGeometry(0, 40, width(), 600 - 40 * 2);
     room_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -71,8 +70,9 @@ void Window::show_menu() {
 
 void Window::load(std::string filename) {
     Room *new_room;
+    auto loader = Loader(filename);
     try {
-        new_room = new Room(filename);
+        new_room = loader.load(this);
     } catch (const exception &e) {
         QMessageBox::critical(nullptr, "Error loading room", e.what());
         return;
@@ -84,11 +84,6 @@ void Window::load(std::string filename) {
     room_listeners();
 
     room_view->setScene(room);
-}
-
-void Window::handle_resize(QPointF size) {
-    qDebug("resize");
-    resize(size.x(), size.y());
 }
 
 
@@ -111,8 +106,6 @@ void Window::room_listeners() {
 
     connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
     connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
-
-    connect(room, &Room::win_resize, this, &Window::handle_resize);
 }
 
 } // namespace icp
