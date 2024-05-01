@@ -35,6 +35,8 @@ private slots:
 private:
     void room_listeners();
 
+    void room_rem_listeners();
+
     QPointer<QPushButton> menu_button;
     QPointer<Menu> menu;
     QPointer<QGraphicsView> room_view;

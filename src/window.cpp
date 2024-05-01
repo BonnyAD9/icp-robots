@@ -78,6 +78,8 @@ void Window::load(std::string filename) {
         QMessageBox::critical(nullptr, "Error loading room", e.what());
         return;
     }
+    room_rem_listeners();
+
     room = new_room;
     room->setSceneRect(0, 0, width(), height() - 40 * 2);
     room->run_simulation(sim_controls->playing());
@@ -86,7 +88,6 @@ void Window::load(std::string filename) {
 
     room_view->setScene(room);
 }
-
 
 //---------------------------------------------------------------------------//
 //                                  PRIVATE                                  //
@@ -107,6 +108,23 @@ void Window::room_listeners() {
 
     connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
     connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
+}
+
+void Window::room_rem_listeners() {
+    disconnect(
+        sim_controls,
+        &SimControls::run_simulation,
+        room,
+        &Room::run_simulation
+    );
+    disconnect(sim_controls, &SimControls::save_room, room, &Room::save);
+
+    disconnect(room, &Room::new_selection, redit_menu, &ReditMenu::select_obj);
+    disconnect(redit_menu, &ReditMenu::remove_obj, room, &Room::remove_obj);
+    disconnect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
+
+    disconnect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
+    disconnect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
 }
 
 } // namespace icp
