@@ -75,6 +75,12 @@ public slots:
      */
     void add_robot_slot(Robot *robot);
 
+    /**
+     * @brief Saves room
+     * @param filename file to save the room into
+     */
+    void save(std::string filename);
+
 protected:
     void timerEvent(QTimerEvent *event) override;
 

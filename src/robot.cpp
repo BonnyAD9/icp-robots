@@ -122,8 +122,26 @@ void Robot::set_angle(QPointF angle) {
     set_angle(atan2(angle.y(), angle.x()));
 }
 
+qreal Robot::get_mod_angle(unsigned mod) {
+    auto ang = -orientation() / M_PI * 180;
+    auto sign = ang > 0 ? 1 : -1;
+    ang = qAbs(ang);
+    auto rnum = (int)ang % mod;
+    return sign * (rnum + (ang - (int)ang));
+}
+
 void Robot::set_speed(qreal speed) {
     mspeed = speed;
+}
+
+void Robot::save(ofstream &file) {
+    auto ang = get_mod_angle(360);
+    if (ang < -180) {
+        ang += 360;
+    }
+
+    file << "robot: [" << rect().x() << ", " << rect().y() << "] { speed: "
+        << mspeed << ", angle: " << ang << " }" << endl;
 }
 
 //---------------------------------------------------------------------------//

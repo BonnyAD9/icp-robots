@@ -74,6 +74,10 @@ public:
      */
     virtual void set_speed(qreal speed) override;
 
+    virtual void save(std::ofstream &file) override;
+
+    virtual void save(std::ofstream &file) override;
+
     /**
      * @brief Gets the elide distance of the robot. (pixels)
      */

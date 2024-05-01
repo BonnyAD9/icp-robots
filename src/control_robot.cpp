@@ -90,6 +90,16 @@ void ControlRobot::set_speed(qreal speed) {
     Robot::set_speed(speed);
 }
 
+void ControlRobot::save(ofstream &file) {
+    auto ang = get_mod_angle(360);
+    if (ang < -180) {
+        ang += 360;
+    }
+
+    file << "control_robot: [" << rect().x() << ", " << rect().y()
+        << "] { speed: " << sspeed << ", rotation_speed: " << rot_speed
+        << ", angle: " << ang << " }" << endl;
+}
 
 qreal ControlRobot::rspeed() const {
     return rot_speed;

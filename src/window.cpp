@@ -52,6 +52,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         room,
         &Room::run_simulation
     );
+    connect(sim_controls, &SimControls::save_room, room, &Room::save);
 
     connect(
         menu,

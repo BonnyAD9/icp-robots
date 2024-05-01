@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
+#include <fstream>
 
 #include <QGraphicsEllipseItem>
 
@@ -114,10 +115,22 @@ public:
     void set_angle(QPointF angle);
 
     /**
+     * @brief Gets modded angle of the robot in degrees
+     * @param mod mod value
+     */
+    qreal get_mod_angle(unsigned mod);
+
+    /**
      * @brief Sets the robot movement speed.
      * @param speed Speed of the robot in pixels per second.
      */
     virtual void set_speed(qreal speed);
+
+    /**
+     * @brief Saves robot to the file
+     * @param file file to save robot into
+     */
+    virtual void save(std::ofstream &file);
 
 signals:
     /**

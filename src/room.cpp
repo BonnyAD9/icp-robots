@@ -3,10 +3,14 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include <fstream>
 
 #include <QPointer>
 #include <QTimerEvent>
 #include <QKeyEvent>
+
+#include "auto_robot.hpp"
+#include "control_robot.hpp"
 
 namespace icp {
 
@@ -211,13 +215,29 @@ void Room::change_robot(Robot *old, Robot *replace) {
 
 void Room::add_obstacle_slot(Obstacle *obstacle) {
     add_obstacle(unique_ptr<Obstacle>(obstacle));
-    // addItem(obstacle);
-    // obstacle->start_drag();
-    // obstacles.push_back(obstacle);
 }
 
 void Room::add_robot_slot(Robot *robot) {
     add_robot(unique_ptr<Robot>(robot));
+}
+
+void Room::save(string filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        qDebug("Unable to open file");
+        return;
+    }
+
+    file << "room: " << width() << "x" << height() << endl;
+    for (auto obst : obstacles) {
+        file << "obstacle: " << obst->rect().width() << "x"
+            << obst->rect().height() << " [" << obst->rect().x() << ", "
+            << obst->rect().y() << "]" << endl;
+    }
+
+    for (auto rob : robots) {
+        rob->save(file);
+    }
 }
 
 //---------------------------------------------------------------------------//

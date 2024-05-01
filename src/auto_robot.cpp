@@ -113,6 +113,18 @@ void AutoRobot::set_speed(qreal speed) {
     }
 }
 
+void AutoRobot::save(ofstream &file) {
+    auto ang = get_mod_angle(360);
+    if (ang < -180) {
+        ang += 360;
+    }
+
+    file << "auto_robot: [" << rect().x() << ", " << rect().y()
+        << "] { speed: " << sspeed << ", rotation_speed: " << rot_speed
+        << ", elide_distance: " << elide_dist << ", elide_rotation: "
+        << elide_rot << ", angle: " << ang << " }" << endl;
+}
+
 qreal AutoRobot::edist() const {
     return elide_dist;
 }

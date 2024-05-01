@@ -3,6 +3,8 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QPointer>
+#include <QLineEdit>
+#include <QHBoxLayout>
 
 namespace icp {
 
@@ -33,11 +35,23 @@ signals:
      */
     void run_simulation(bool play);
 
+    /**
+     * @brief Save button was pressed
+     * @param filename file to save room into
+     */
+    void save_room(std::string filename);
+
 private slots:
     void handle_play_pause(bool checked);
 
+    void handle_save();
+
 private:
+    QPointer<QHBoxLayout> layout;
+    QPointer<QLineEdit> path;
     QPointer<QPushButton> play_pause;
+    QPointer<QPushButton> save;
+    QPointer<QPushButton> load;
     bool is_playing;
 };
 
