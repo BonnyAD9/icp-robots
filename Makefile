@@ -1,9 +1,10 @@
 # TODO SET PROPER VALUES BEFORE SUBMIT
 BUILD_TYPE=Debug
-PARALEL=-j 14
+PARALEL=-j $(shell nproc)
 
-.PHONY: build run clean
+ARCHIVE=xsleza26-xstigl00.tar.gz
 
+.PHONY: build
 build:
 	if [ ! -f build/Makefile ]; then \
 		mkdir build; \
@@ -12,8 +13,18 @@ build:
 	fi
 	cd build && $(MAKE) $(PARALEL)
 
+.PHONY: run
 run: build
 	build/icp-robots
 
+.PHONY: doxygen
+doxygen:
+	doxygen
+
+.PHONY: pack
+pack:
+	tar czf $(ARCHIVE) -- src/* Doxyfile Makefile README.txt
+
+.PHONY: clean
 clean:
-	-rm -r build
+	-rm -r build doc $(ARCHIVE)

@@ -1,3 +1,9 @@
+/**
+ * @mainpage icp-robots
+ * 
+ * @include ../README.txt
+ */
+
 #include <iostream>
 
 #include <QApplication>

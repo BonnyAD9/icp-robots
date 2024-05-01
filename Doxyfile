@@ -1,0 +1,8 @@
+PROJECT_NAME           = "icp-robots"
+PROJECT_BRIEF          = "Project to the subject ICP. 2D simulation of robots."
+OUTPUT_DIRECTORY       = doc
+INPUT                  = ./src README.txt
+USE_MDFILE_AS_MAINPAGE = README.txt
+HTML_COLORSTYLE_HUE    = 54
+HTML_COLORSTYLE_sat    = 100
+HTML_COLORSTYLE_GAMMA  = 75

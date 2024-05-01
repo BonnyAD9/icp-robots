@@ -6,6 +6,9 @@
 
 namespace icp {
 
+/**
+ * @brief Menu for controling the simulation.
+ */
 class SimControls : public QWidget {
     Q_OBJECT
 
@@ -26,8 +29,7 @@ public:
 signals:
     /**
      * @brief Play/Pause button was pressed.
-     *
-     * @param play
+     * @param play `true` if the simulation should run, otherwise `false`.
      */
     void run_simulation(bool play);
 

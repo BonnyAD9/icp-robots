@@ -2,6 +2,8 @@
 
 #include <QBrush>
 
+#include "control_robot.hpp"
+
 namespace icp {
 
 using namespace std;
@@ -54,11 +56,17 @@ AutoRobot::AutoRobot(Robot *r) :
     rot_speed(M_PI / 4)
 {
     setBrush(QBrush(QColor(0x55, 0x55, 0xcc)));
-    auto rob = dynamic_cast<AutoRobot *>(r);
-    if (rob) {
-        elide_dist = rob->elide_dist;
-        elide_rot = rob->elide_rot;
-        rot_speed = rob->rot_speed;
+
+    auto arob = dynamic_cast<AutoRobot *>(r);
+    if (arob) {
+        elide_dist = arob->elide_dist;
+        elide_rot = arob->elide_rot;
+        rot_speed = arob->rot_speed;
+    }
+
+    auto crob = dynamic_cast<ControlRobot *>(r);
+    if (crob) {
+        rot_speed = crob->rspeed();
     }
 }
 

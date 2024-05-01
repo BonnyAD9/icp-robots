@@ -11,6 +11,11 @@ namespace icp {
 
 using namespace std;
 
+/**
+ * @brief Diameter of the robot.
+ */
+constexpr qreal ROBOT_D = 50;
+
 //---------------------------------------------------------------------------//
 //                                  PUBLIC                                   //
 //---------------------------------------------------------------------------//
@@ -67,11 +72,6 @@ void ObstacleButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 void ObstacleButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     unsetCursor();
 }
-
-/**
- * @brief Diameter of the robot.
- */
-constexpr qreal ROBOT_D = 50;
 
 //---------------------------------------------------------------------------//
 //                                  PUBLIC                                   //

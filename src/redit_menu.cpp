@@ -9,10 +9,22 @@ namespace icp {
 
 using namespace std;
 
+/**
+ * @brief `AutoRobot`
+ */
 constexpr int R_AUTO = 0;
+/**
+ * @brief `ControlRobot`
+ */
 constexpr int R_CONTROL = 1;
+/**
+ * @brief `Robot` but not `AutoRobot` or `ControlRobot`
+ */
 constexpr int R_DUMMY = 2;
 
+/**
+ * @brief Modulo on a floating point number.
+ */
 qreal dmod(qreal num, unsigned mod) {
     auto sign = num > 0 ? 1 : -1;
     num = qAbs(num);

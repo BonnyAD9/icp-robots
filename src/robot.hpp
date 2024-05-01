@@ -51,6 +51,7 @@ public:
      * robot.
      */
     virtual void move(qreal delta, qreal distance);
+
     /**
      * @brief Gets the position change from the last move.
      */
@@ -60,11 +61,13 @@ public:
      * @brief Checks whether the robot is grabbed.
      */
     inline bool is_grabbed() const { return grabbed; }
+
     /**
      * @brief Gets the visual bounding box.
      * @return The bounding box of the robot.
      */
     QRectF hitbox() const;
+
     /**
      * @brief Sets the visual bounding box of the robot.
      * @param box The visual bounding box of the robot (size may be ignored).
@@ -75,45 +78,62 @@ public:
      * @brief Gets the movement speed and orientation.
      */
     QPointF step();
+
     /**
      * @brief Gets the angle the robot is facing.
      */
     qreal orientation();
+
     /**
      * @brief Gets the unit vector of the orientation
      */
     QPointF orientation_vec();
+
     /**
      * @brief Gets the movement speed.
      */
     virtual qreal speed();
 
+    /**
+     * @brief Select/unselect the robot.
+     * @param val when `true` robot is selected, otherwise robot is unselected.
+     */
     void set_selected(bool val = true);
 
     /**
      * @brief Sets the angle and speed so that it matches the given step.
      */
     void set_step(QPointF step);
+
     /**
      * @brief Sets the orientation of the robot.
      * @param angle Angle in radans.
      */
     void set_angle(qreal angle);
+
     /**
      * @brief Sets the orientation of the robot.
      * @param angle Takes the mod of the vector.
      */
     void set_angle(QPointF angle);
+
     /**
      * @brief Sets the robot movement speed.
      * @param speed Speed of the robot in pixels per second.
      */
     virtual void set_speed(qreal speed);
 
-    void start_drag();
-
 signals:
+    /**
+     * @brief Emited when the robot selection is changed.
+     * @param sender `this` when the robot is selected, `nullptr` when the
+     * robot is unselected.
+     */
     void select(Robot *sender);
+    /**
+     * @brief Emited when the angle of the robot changes.
+     * @param angle The new angle.
+     */
     void angle_change(qreal angle);
 
 protected:
