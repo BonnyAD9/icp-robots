@@ -112,7 +112,7 @@ void Window::room_listeners() {
     connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
     connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
 
-    connect(room, &Room::resize, this, &Window::handle_resize);
+    connect(room, &Room::win_resize, this, &Window::handle_resize);
 }
 
 } // namespace icp

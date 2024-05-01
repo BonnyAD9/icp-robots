@@ -56,7 +56,7 @@ signals:
      * @brief Signal for window resize
      * @param size new size of the window
      */
-    void resize(QPointF size);
+    void win_resize(QPointF size);
 
 public slots:
     /**

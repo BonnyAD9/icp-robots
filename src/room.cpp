@@ -327,7 +327,7 @@ void Room::load(string filename) {
             return;
 
         if (ident == "room") {
-            emit resize(read_size(file));
+            emit win_resize(read_size(file));
         } else if (ident == "obstacle") {
             add_obstacle(unique_ptr<Obstacle>(load_obstacle(file)));
         } else if (ident == "robot") {
