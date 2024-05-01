@@ -4,6 +4,10 @@
 
 namespace icp {
 
+/**
+ * @brief Class representing object that can be placed into the room with
+ * robots and can be selected.
+ */
 class SceneObj : public QObject {
     Q_OBJECT
 
