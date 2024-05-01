@@ -96,7 +96,23 @@ bool Obstacle::is_grabbed() const {
 //                                 PROTECTED                                 //
 //---------------------------------------------------------------------------//
 
+void Obstacle::selection_event(bool selected) {
+    auto col = QColor(0xff, 0xff, 0xff);
+    if (selected) {
+        col = QColor(0xff, 0xff, 0x55);
+    }
+    setPen(QPen(
+        col,
+        BORDER_THICKNESS,
+        Qt::SolidLine,
+        Qt::SquareCap,
+        Qt::PenJoinStyle::SvgMiterJoin
+    ));
+}
+
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    set_selected();
+
     if (event->button() & Qt::LeftButton) {
         if (state == State::None) {
             setCursor(Qt::ClosedHandCursor);

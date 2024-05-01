@@ -38,7 +38,7 @@ qreal dmod(qreal num, unsigned mod) {
 
 ReditMenu::ReditMenu(QRect rect, QWidget *parent) :
     QWidget(parent),
-    robot(nullptr)
+    obj(nullptr)
 {
     robot_select_label = new QLabel("type:", this);
     robot_select = new QComboBox(this);
@@ -159,70 +159,73 @@ void ReditMenu::relayout(QRect rect) {
 //                               PUBLIC SLOTS                                //
 //---------------------------------------------------------------------------//
 
-void ReditMenu::select_robot(Robot *robot) {
-    if (this->robot == robot) {
+void ReditMenu::select_obj(SceneObj *obj) {
+    if (this->obj == obj) {
         return;
     }
 
-    if (this->robot) {
+    auto trob = dynamic_cast<Robot *>(this->obj);
+
+    if (trob) {
         disconnect(
-            this->robot,
+            trob,
             &Robot::angle_change,
             this,
             &ReditMenu::robot_angle_change
         );
     }
 
-    this->robot = robot;
-    if (robot) {
-        robot_select_label->show();
-        robot_select->show();
-        speed_label->show();
-        speed->show();
-        angle_label->show();
-        angle->show();
-        distance_label->hide();
-        distance->hide();
-        rspeed_label->hide();
-        rspeed->hide();
-        rdist_label->hide();
-        rdist->hide();
-        deselect->show();
-        remove->show();
-    } else {
-        robot_select_label->hide();
-        robot_select->hide();
-        speed_label->hide();
-        speed->hide();
-        angle_label->hide();
-        angle->hide();
-        distance_label->hide();
-        distance->hide();
-        rspeed_label->hide();
-        rspeed->hide();
-        rdist_label->hide();
-        rdist->hide();
-        deselect->hide();
-        remove->hide();
+    robot_select_label->hide();
+    robot_select->hide();
+    speed_label->hide();
+    speed->hide();
+    angle_label->hide();
+    angle->hide();
+    distance_label->hide();
+    distance->hide();
+    rspeed_label->hide();
+    rspeed->hide();
+    rdist_label->hide();
+    rdist->hide();
+    deselect->hide();
+    remove->hide();
+
+    this->obj = obj;
+    if (!obj) {
         return;
     }
 
+    deselect->show();
+    remove->show();
+
+    auto rob = dynamic_cast<Robot *>(obj);
+    if (!rob) {
+        return;
+    }
+
+    robot_select_label->show();
+    robot_select->show();
+    speed_label->show();
+    speed->show();
+    angle_label->show();
+    angle->show();
+
     connect(
-        robot,
+        rob,
         &Robot::angle_change,
         this,
         &ReditMenu::robot_angle_change
     );
 
     robot_select->setCurrentIndex(get_robot_type());
-    speed->setText(QString::number(robot->speed(), 'f', 2));
-    auto num = dmod(-robot->orientation() / M_PI * 180, 360);
+    speed->setText(QString::number(rob->speed(), 'f', 2));
+    auto num = dmod(-rob->orientation() / M_PI * 180, 360);
     if (num < -180) {
         num += 360;
     }
     angle->setText(QString::number(num, 'f', 2));
 
-    AutoRobot *arob = dynamic_cast<AutoRobot *>(robot);
+    AutoRobot *arob = dynamic_cast<AutoRobot *>(rob);
     if (arob) {
         distance_label->show();
         distance->show();
@@ -235,7 +238,7 @@ void ReditMenu::select_robot(Robot *robot) {
         rspeed->setText(QString::number(arob->rspeed() / M_PI * 180, 'f', 2));
         rdist->setText(QString::number(-arob->rdist() / M_PI * 180, 'f', 2));
     }
-    ControlRobot *crob = dynamic_cast<ControlRobot *>(robot);
+    ControlRobot *crob = dynamic_cast<ControlRobot *>(rob);
     if (crob) {
         rspeed_label->show();
         rspeed->show();
@@ -249,61 +252,64 @@ void ReditMenu::select_robot(Robot *robot) {
 //---------------------------------------------------------------------------//
 
 void ReditMenu::handle_deselect(bool) {
-    if (robot) {
-        robot->set_selected(false);
+    if (obj) {
+        obj->set_selected(false);
     }
 }
 
 void ReditMenu::handle_remove(bool) {
-    emit remove_robot(robot);
+    emit remove_obj(obj);
 }
 
 void ReditMenu::handle_type_change(int idx) {
+    auto rob = dynamic_cast<Robot *>(obj);
     if (idx == get_robot_type()) {
         return;
     }
 
     switch (idx) {
         case R_AUTO:
-            emit change_robot(robot, new AutoRobot(robot));
+            emit change_robot(rob, new AutoRobot(rob));
             break;
         case R_CONTROL:
-            emit change_robot(robot, new ControlRobot(robot));
+            emit change_robot(rob, new ControlRobot(rob));
             break;
         case R_DUMMY:
-            emit change_robot(robot, new Robot(robot));
+            emit change_robot(rob, new Robot(rob));
             break;
     }
 }
 
 void ReditMenu::speed_editing_finished() {
-    if (robot) {
-        robot->set_speed(speed->text().toDouble());
+    auto rob = dynamic_cast<Robot *>(obj);
+    if (rob) {
+        rob->set_speed(speed->text().toDouble());
     }
 }
 
 void ReditMenu::angle_editing_finished() {
-    if (robot) {
-        robot->set_angle(-angle->text().toDouble() / 180 * M_PI);
+    auto rob = dynamic_cast<Robot *>(obj);
+    if (rob) {
+        rob->set_angle(-angle->text().toDouble() / 180 * M_PI);
     }
 }
 
 void ReditMenu::distance_editing_finished() {
-    auto arob = dynamic_cast<AutoRobot *>(robot);
+    auto arob = dynamic_cast<AutoRobot *>(obj);
     if (arob) {
         arob->set_edist(distance->text().toDouble());
     }
 }
 
 void ReditMenu::rspeed_editing_finished() {
-    auto arob = dynamic_cast<AutoRobot *>(robot);
+    auto arob = dynamic_cast<AutoRobot *>(obj);
     if (arob) {
         arob->set_rspeed(rspeed->text().toDouble() / 180 * M_PI);
     }
 }
 
 void ReditMenu::rdist_editing_finished() {
-    auto arob = dynamic_cast<AutoRobot *>(robot);
+    auto arob = dynamic_cast<AutoRobot *>(obj);
     if (arob) {
         arob->set_rdist(-rdist->text().toDouble() / 180 * M_PI);
     }
@@ -326,11 +332,11 @@ void ReditMenu::robot_angle_change(qreal angle) {
 //---------------------------------------------------------------------------//
 
 int ReditMenu::get_robot_type() {
-    auto auto_rob = dynamic_cast<AutoRobot *>(robot);
+    auto auto_rob = dynamic_cast<AutoRobot *>(obj);
     if (auto_rob) {
         return R_AUTO;
     }
-    auto control_rob = dynamic_cast<ControlRobot *>(robot);
+    auto control_rob = dynamic_cast<ControlRobot *>(obj);
     if (control_rob) {
         return R_CONTROL;
     }

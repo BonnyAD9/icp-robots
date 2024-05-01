@@ -100,16 +100,6 @@ qreal Robot::speed() {
     return mspeed;
 }
 
-void Robot::set_selected(bool val) {
-    if (val) {
-        setPen(QPen(QColor(0xff, 0xff, 0x55), BORDER_THICKNESS));
-        emit select(this);
-    } else {
-        setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
-        emit select(nullptr);
-    }
-}
-
 void Robot::set_step(QPointF step) {
     set_angle(step);
     set_speed(sqrt(step.x() * step.x() + step.y() * step.y()));
@@ -139,6 +129,14 @@ void Robot::set_speed(qreal speed) {
 //---------------------------------------------------------------------------//
 //                                PROTECTED                                  //
 //---------------------------------------------------------------------------//
+
+void Robot::selection_event(bool selected) {
+    if (selected) {
+        setPen(QPen(QColor(0xff, 0xff, 0x55), BORDER_THICKNESS));
+    } else {
+        setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
+    }
+}
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     set_selected();

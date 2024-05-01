@@ -6,12 +6,14 @@
 
 #include <QGraphicsEllipseItem>
 
+#include "scene_obj.hpp"
+
 namespace icp {
 
 /**
  * @brief Represents a robot that can move and can be moved by the user.
  */
-class Robot : public QObject, public QGraphicsEllipseItem {
+class Robot : public SceneObj, public QGraphicsEllipseItem {
     Q_OBJECT
 
 public:
@@ -95,12 +97,6 @@ public:
     virtual qreal speed();
 
     /**
-     * @brief Select/unselect the robot.
-     * @param val when `true` robot is selected, otherwise robot is unselected.
-     */
-    void set_selected(bool val = true);
-
-    /**
      * @brief Sets the angle and speed so that it matches the given step.
      */
     void set_step(QPointF step);
@@ -125,18 +121,14 @@ public:
 
 signals:
     /**
-     * @brief Emited when the robot selection is changed.
-     * @param sender `this` when the robot is selected, `nullptr` when the
-     * robot is unselected.
-     */
-    void select(Robot *sender);
-    /**
      * @brief Emited when the angle of the robot changes.
      * @param angle The new angle.
      */
     void angle_change(qreal angle);
 
 protected:
+    void selection_event(bool selected) override;
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
