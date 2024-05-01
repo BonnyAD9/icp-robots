@@ -12,11 +12,13 @@ SimControls::SimControls(QRect rect, QWidget *parent)
 {
     layout = new QHBoxLayout(this);
 
-    path = new QLineEdit(this);
+    path_input = new QLineEdit(this);
+
     save = new QPushButton("save", this);
     connect(save, &QPushButton::clicked, this, &SimControls::handle_save);
 
     load = new QPushButton("load", this);
+    connect(load, &QPushButton::clicked, this, &SimControls::handle_load);
 
     play_pause = new QPushButton("pause", this);
     connect(
@@ -26,7 +28,7 @@ SimControls::SimControls(QRect rect, QWidget *parent)
         &SimControls::handle_play_pause
     );
 
-    layout->addWidget(path);
+    layout->addWidget(path_input);
     layout->addWidget(save);
     layout->addWidget(load);
     layout->addStretch(1);
@@ -51,6 +53,10 @@ void SimControls::handle_play_pause(bool checked) {
 
 void SimControls::handle_save() {
     emit save_room("test.txt");
+}
+
+void SimControls::handle_load() {
+    emit load_room(path_input->text().toStdString());
 }
 
 } // namespace icp

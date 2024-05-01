@@ -27,7 +27,9 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private slots:
-    void handleMenuBtnClick();
+    void show_menu();
+
+    void load(std::string filename);
 
 private:
     QPointer<QPushButton> menu_button;

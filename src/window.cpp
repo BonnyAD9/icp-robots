@@ -40,9 +40,7 @@ Window::Window(QWidget *parent) : QWidget(parent) {
 
     menu_button = new QPushButton("menu", this);
     menu_button->setGeometry(5, 45, 54, 30);
-    connect(
-        menu_button, &QPushButton::clicked, this, &Window::handleMenuBtnClick
-    );
+    connect(menu_button, &QPushButton::clicked, this, &Window::show_menu);
 
     menu = new Menu(this);
     menu->setGeometry(0, 40, 800, 600 - 40 * 2);
@@ -55,20 +53,10 @@ Window::Window(QWidget *parent) : QWidget(parent) {
         &Room::run_simulation
     );
     connect(sim_controls, &SimControls::save_room, room, &Room::save);
+    connect(sim_controls, &SimControls::load_room, this, &Window::load);
 
-    connect(
-        menu,
-        SIGNAL(add_obstacle(Obstacle *)),
-        room,
-        SLOT(add_obstacle_slot(Obstacle *))
-    );
-
-    connect(
-        menu,
-        SIGNAL(add_robot(Robot *)),
-        room,
-        SLOT(add_robot_slot(Robot *))
-    );
+    connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
+    connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
 
     // test code
     // room->add_obstacle(unique_ptr<Obstacle>(
@@ -100,8 +88,30 @@ void Window::resizeEvent(QResizeEvent *event) {
 //                               PRIVATE SLOTS                               //
 //---------------------------------------------------------------------------//
 
-void Window::handleMenuBtnClick() {
+void Window::show_menu() {
     menu->show();
+}
+
+void Window::load(std::string filename) {
+    room = new Room(filename);
+    room->setSceneRect(0, 0, width(), height() - 40 * 2);
+
+    connect(room, &Room::new_selection, redit_menu, &ReditMenu::select_robot);
+    connect(redit_menu, &ReditMenu::remove_robot, room, &Room::remove_robot);
+    connect(redit_menu, &ReditMenu::change_robot, room, &Room::change_robot);
+
+    connect(
+        sim_controls,
+        &SimControls::run_simulation,
+        room,
+        &Room::run_simulation
+    );
+    connect(sim_controls, &SimControls::save_room, room, &Room::save);
+
+    connect(menu, &Menu::add_obstacle, room, &Room::add_obstacle_slot);
+    connect(menu, &Menu::add_robot, room, &Room::add_robot_slot);
+
+    room_view->setScene(room);
 }
 
 } // namespace icp
