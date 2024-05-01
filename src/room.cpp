@@ -130,6 +130,12 @@ void Room::add_obstacle(unique_ptr<Obstacle> obstacle) {
     Obstacle *obst = obstacle.release();
     addItem(obst);
     obstacles.push_back(obst);
+    connect(
+        obst,
+        &Obstacle::select,
+        this,
+        &Room::select_obj
+    );
 }
 
 void Room::add_robot(unique_ptr<Robot> robot) {
@@ -140,7 +146,7 @@ void Room::add_robot(unique_ptr<Robot> robot) {
         rob,
         &Robot::select,
         this,
-        &Room::select_robot
+        &Room::select_obj
     );
 }
 
@@ -158,28 +164,44 @@ void Room::run_simulation(bool play) {
     }
 }
 
-void Room::remove_robot(Robot *r) {
-    unique_ptr<Robot> rob = unique_ptr<Robot>(r);
-    if (r == selected) {
-        select_robot(NULL);
+void Room::remove_obj(SceneObj *o) {
+    auto obj = unique_ptr<SceneObj>(o);
+    if (o == selected) {
+        select_obj(NULL);
     }
 
-    auto p = find(robots.begin(), robots.end(), r);
-    if (p == robots.end()) {
-        return;
+    auto rob = dynamic_cast<Robot *>(o);
+    if (rob) {
+        auto p = find(robots.begin(), robots.end(), rob);
+        if (p == robots.end()) {
+            return;
+        }
+
+        removeItem(rob);
+
+        swap(*p, *robots.rbegin());
+        robots.pop_back();
     }
 
-    removeItem(r);
+    auto obs = dynamic_cast<Obstacle *>(o);
+    if (obs) {
+        auto p = find(obstacles.begin(), obstacles.end(), obs);
+        if (p == obstacles.end()) {
+            return;
+        }
 
-    swap(*p, *robots.rbegin());
-    robots.pop_back();
+        removeItem(obs);
+
+        swap(*p, *obstacles.rbegin());
+        obstacles.pop_back();
+    }
 }
 
 void Room::change_robot(Robot *old, Robot *replace) {
     auto rep = unique_ptr<Robot>(replace);
     auto sel = selected;
 
-    remove_robot(old);
+    remove_obj(old);
     add_robot(std::move(rep));
 
     if (old == sel) {
@@ -246,13 +268,13 @@ void Room::keyReleaseEvent(QKeyEvent *event) {
 //                              PRIVATE SLOTS                                //
 //---------------------------------------------------------------------------//
 
-void Room::select_robot(Robot *r) {
-    if (selected && selected != r) {
+void Room::select_obj(SceneObj *o) {
+    if (selected && selected != o) {
         QSignalBlocker block(selected);
         selected->set_selected(false);
     }
 
-    selected = r;
+    selected = o;
     emit new_selection(selected);
 }
 

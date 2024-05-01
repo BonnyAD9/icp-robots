@@ -36,7 +36,7 @@ signals:
      * @brief Signal to remove robot from room
      * @param robot robot to be removed
      */
-    void remove_robot(Robot *robot);
+    void remove_obj(SceneObj *robot);
 
     /**
      * @brief Signal for changing robot type
@@ -50,7 +50,7 @@ public slots:
      * @brief Handles selecting robot
      * @param robot robot to be selected
      */
-    void select_robot(Robot *robot);
+    void select_obj(SceneObj *robot);
 
 private slots:
     void handle_deselect(bool);
@@ -66,7 +66,7 @@ private slots:
 private:
     int get_robot_type();
 
-    Robot *robot;
+    SceneObj *obj;
 
     QPointer<QLabel> robot_select_label;
     QPointer<QComboBox> robot_select;

@@ -30,6 +30,8 @@ qt_add_executable(icp-robots
     redit_menu.hpp
     control_robot.cpp
     control_robot.hpp
+    scene_obj.cpp
+    scene_obj.hpp
 )
 
 # TODO: REMOVE SANITIZE BEFORE SUBMIT

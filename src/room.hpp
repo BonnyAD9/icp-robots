@@ -29,7 +29,7 @@ public:
      * @param obstacle Obstacle to add to the room.
      */
     void add_obstacle(std::unique_ptr<Obstacle> obstacle);
-    
+
     /**
      * @brief Adds robot to the room.
      * @param robot Robot to add to the room.
@@ -38,10 +38,10 @@ public:
 
 signals:
     /**
-     * @brief Signal for new robot selection
-     * @param r new selected robot
+     * @brief Signal for new object selection
+     * @param o new selected object
      */
-    void new_selection(Robot *r);
+    void new_selection(SceneObj *o);
 
 public slots:
     /**
@@ -51,10 +51,10 @@ public slots:
     void run_simulation(bool play);
 
     /**
-     * @brief Remove robot
-     * @param r robot to be removed
+     * @brief Remove object.
+     * @param o object to be removed
      */
-    void remove_robot(Robot *r);
+    void remove_obj(SceneObj *o);
 
     /**
      * @brief Changes robot to new type
@@ -82,7 +82,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private slots:
-    void select_robot(Robot *r);
+    void select_obj(SceneObj *o);
 
 private:
     void tick(qreal delta);
@@ -96,7 +96,7 @@ private:
     std::vector<Obstacle *> obstacles;
     std::vector<Robot *> robots;
 
-    Robot *selected;
+    SceneObj *selected;
 
     int timer;
 };

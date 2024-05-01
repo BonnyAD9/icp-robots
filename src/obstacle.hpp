@@ -4,12 +4,14 @@
 #include <QGraphicsRectItem>
 #include <QCursor>
 
+#include "scene_obj.hpp"
+
 namespace icp {
 
 /**
  * @brief Class representing obstacle
  */
-class Obstacle : public QGraphicsRectItem {
+class Obstacle : public SceneObj, public QGraphicsRectItem {
 public:
     /**
      * @brief Creates new obstacle
@@ -49,6 +51,8 @@ public:
     bool is_grabbed() const;
 
 protected:
+    void selection_event(bool selected) override;
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
