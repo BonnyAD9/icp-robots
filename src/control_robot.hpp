@@ -52,7 +52,14 @@ public:
      */
     void move(qreal delta, qreal distance) override;
 
+    /**
+     * @brief Gets the movement speed of the robot. (pixels per second)
+     */
     virtual qreal speed() override;
+
+    /**
+     * @brief Sets the movement speed of the robot. (pixels per second)
+     */
     virtual void set_speed(qreal speed) override;
 
     /**

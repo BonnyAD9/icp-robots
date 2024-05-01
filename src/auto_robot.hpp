@@ -52,6 +52,9 @@ public:
         QObject *parent = nullptr
     );
 
+    /**
+     * @brief Creates auto robot with the same parameters as the given robot.
+     */
     explicit AutoRobot(Robot *r);
 
     /**
@@ -61,14 +64,44 @@ public:
      */
     void move(qreal delta, qreal distance) override;
 
+    /**
+     * @brief Gets the speed of the robot. (pixels per second)
+     */
     virtual qreal speed() override;
+
+    /**
+     * @brief Sets the speed of the robot. (pixels per second)
+     */
     virtual void set_speed(qreal speed) override;
 
+    /**
+     * @brief Gets the elide distance of the robot. (pixels)
+     */
     qreal edist() const;
+
+    /**
+     * @brief Sets the elide distance of the robot. (pixels)
+     */
     void set_edist(qreal dist);
+
+    /**
+     * @brief Gets the rotation speed of the robot. (radians per second)
+     */
     qreal rspeed() const;
+
+    /**
+     * @brief Sets the rotation speed of the robot. (radans per second)
+     */
     void set_rspeed(qreal speed);
+
+    /**
+     * @brief Gets the rotation distance to avoid collision. (radians)
+     */
     qreal rdist() const;
+
+    /**
+     * @brief Sets the rotation distance to avoid collision. (radians)
+     */
     void set_rdist(qreal dist);
 
 private:

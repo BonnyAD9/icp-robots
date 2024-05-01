@@ -44,6 +44,14 @@ constexpr Obstacle::State operator&(
     );
 }
 
+/**
+ * @brief Checks whether the flag `r` is in the flags enum `l`. Equivalent to
+ * `(l & r) == r`
+ *
+ * @param l Flags.
+ * @param r Single flag.
+ * @return `true` if the flag `r` is in the flags enum `l`.
+ */
 bool operator*(const Obstacle::State &l, const Obstacle::State &r) {
     return (l & r) == r;
 }

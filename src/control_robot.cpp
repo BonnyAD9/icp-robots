@@ -2,6 +2,8 @@
 
 #include <QBrush>
 
+#include "auto_robot.hpp"
+
 namespace icp {
 
 using namespace std;
@@ -46,6 +48,16 @@ ControlRobot::ControlRobot(Robot *r) :
     cur_rot_speed(0)
 {
     setBrush(QBrush(QColor(0x55, 0xcc, 0x55)));
+
+    auto arob = dynamic_cast<AutoRobot *>(r);
+    if (arob) {
+        rot_speed = arob->rspeed();
+    }
+
+    auto crob = dynamic_cast<ControlRobot *>(r);
+    if (crob) {
+        rot_speed = crob->rspeed();
+    }
 }
 
 void ControlRobot::move(qreal delta, qreal distance) {
