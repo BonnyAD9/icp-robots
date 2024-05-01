@@ -76,8 +76,6 @@ public:
 
     virtual void save(std::ofstream &file) override;
 
-    virtual void save(std::ofstream &file) override;
-
     /**
      * @brief Gets the elide distance of the robot. (pixels)
      */
