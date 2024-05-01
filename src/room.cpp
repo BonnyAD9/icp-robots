@@ -329,21 +329,13 @@ void Room::load(string filename) {
         if (ident == "room") {
             auto size = read_size(file);
         } else if (ident == "obstacle") {
-            auto obst = load_obstacle(file);
-            if (obst)
-                add_obstacle(unique_ptr<Obstacle>(obst));
+            add_obstacle(unique_ptr<Obstacle>(load_obstacle(file)));
         } else if (ident == "robot") {
-            auto rob = load_robot(file);
-            if (rob)
-                add_robot(unique_ptr<Robot>(rob));
+            add_robot(unique_ptr<Robot>(load_robot(file)));
         } else if (ident == "auto_robot") {
-            auto rob = load_auto_robot(file);
-            if (rob)
-                add_robot(unique_ptr<Robot>(rob));
+            add_robot(unique_ptr<Robot>(load_auto_robot(file)));
         } else if (ident == "control_robot") {
-            auto rob = load_control_robot(file);
-            if (rob)
-                add_robot(unique_ptr<Robot>(rob));
+            add_robot(unique_ptr<Robot>(load_control_robot(file)));
         } else {
             throw runtime_error("Unexpected identifier: '" + ident + "'");
         }
@@ -360,14 +352,14 @@ Obstacle *Room::load_obstacle(ifstream &file) {
 
         file >> ws >> c;
         if (c != '[')
-            return nullptr;
+            throw runtime_error("Position expected");
 
         pos = read_pos(file);
     } else if (c == '[') {
         pos = read_pos(file);
         size = read_size(file);
     } else {
-        return nullptr;
+        throw runtime_error("Position expected");
     }
 
     auto rect = QRectF(pos.x(), pos.y(), size.x(), size.y());
@@ -383,25 +375,28 @@ Robot *Room::load_robot(ifstream &file) {
         pos = read_pos(file);
 
         file >> ws >> c;
-        if (c != '{')
-            return nullptr;
+        if (c == '{') {
+            while (true) {
+                auto ident = read_ident(file);
+                if (ident == "speed") {
+                    file >> ws >> speed;
+                } else if (ident == "angle") {
+                    file >> ws >> angle;
+                } else {
+                    throw runtime_error(
+                        "Unexpected robot attribute: '" + ident + "'"
+                    );
+                }
+                file >> ws >> c;
+                if (c == '}')
+                    break;
+                if (c == ',')
+                    continue;
 
-        while (true) {
-            auto ident = read_ident(file);
-            if (ident == "speed") {
-                file >> ws >> speed;
-            } else if (ident == "angle") {
-                file >> ws >> angle;
-            } else {
-                return nullptr;
+                throw runtime_error("Unexpected character");
             }
-            file >> ws >> c;
-            if (c == '}')
-                break;
-            if (c == ',')
-                continue;
-
-            return nullptr;
+        } else {
+            file.seekg((int)file.tellg() - 1);
         }
     }
     angle = -angle * M_PI / 180.0;
@@ -417,31 +412,34 @@ AutoRobot *Room::load_auto_robot(ifstream &file) {
         pos = read_pos(file);
 
         file >> ws >> c;
-        if (c != '{')
-            return nullptr;
+        if (c == '{') {
+            while (true) {
+                auto ident = read_ident(file);
+                if (ident == "speed") {
+                    file >> ws >> speed;
+                } else if (ident == "angle") {
+                    file >> ws >> angle;
+                } else if (ident == "elide_distance") {
+                    file >> ws >> el;
+                } else if (ident == "elide_rotation") {
+                    file >> ws >> el_r;
+                } else if (ident == "rotation_speed") {
+                    file >> ws >> r;
+                } else {
+                    throw runtime_error(
+                        "Unexpected robot attribute: '" + ident + "'"
+                    );
+                }
+                file >> ws >> c;
+                if (c == '}')
+                    break;
+                if (c == ',')
+                    continue;
 
-        while (true) {
-            auto ident = read_ident(file);
-            if (ident == "speed") {
-                file >> ws >> speed;
-            } else if (ident == "angle") {
-                file >> ws >> angle;
-            } else if (ident == "elide_distance") {
-                file >> ws >> el;
-            } else if (ident == "elide_rotation") {
-                file >> ws >> el_r;
-            } else if (ident == "rotation_speed") {
-                file >> ws >> r;
-            } else {
-                return nullptr;
+                throw runtime_error("Unexpected character");
             }
-            file >> ws >> c;
-            if (c == '}')
-                break;
-            if (c == ',')
-                continue;
-
-            return nullptr;
+        } else {
+            file.seekg((int)file.tellg() - 1);
         }
     }
     angle = -angle * M_PI / 180.0;
@@ -457,27 +455,30 @@ ControlRobot *Room::load_control_robot(ifstream &file) {
         pos = read_pos(file);
 
         file >> ws >> c;
-        if (c != '{')
-            return nullptr;
+        if (c == '{') {
+            while (true) {
+                auto ident = read_ident(file);
+                if (ident == "speed") {
+                    file >> ws >> speed;
+                } else if (ident == "angle") {
+                    file >> ws >> angle;
+                } else if (ident == "rotation_speed") {
+                    file >> ws >> r;
+                } else {
+                    throw runtime_error(
+                        "Unexpected robot attribute: '" + ident + "'"
+                    );
+                }
+                file >> ws >> c;
+                if (c == '}')
+                    break;
+                if (c == ',')
+                    continue;
 
-        while (true) {
-            auto ident = read_ident(file);
-            if (ident == "speed") {
-                file >> ws >> speed;
-            } else if (ident == "angle") {
-                file >> ws >> angle;
-            } else if (ident == "rotation_speed") {
-                file >> ws >> r;
-            } else {
-                return nullptr;
+                throw runtime_error("Unexpected character");
             }
-            file >> ws >> c;
-            if (c == '}')
-                break;
-            if (c == ',')
-                continue;
-
-            return nullptr;
+        } else {
+            file.seekg((int)file.tellg() - 1);
         }
     }
     angle = -angle * M_PI / 180.0;
@@ -493,7 +494,7 @@ string Room::read_ident(ifstream &file) {
             return res;
 
         if (!isalpha(c) && c != '_') {
-            return "";
+            throw runtime_error("Invalid character in indentifier");
         }
 
         res += c;
