@@ -113,6 +113,7 @@ void Obstacle::selection_event(bool selected) {
 }
 
 void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    setZValue(1);
     set_selected();
 
     if (event->button() & Qt::LeftButton) {
@@ -125,6 +126,7 @@ void Obstacle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void Obstacle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    setZValue(0);
     if (event->button() & Qt::LeftButton) {
         state = State::None;
         ungrabMouse();

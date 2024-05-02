@@ -157,6 +157,7 @@ void Robot::selection_event(bool selected) {
 }
 
 void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    setZValue(1);
     set_selected();
 
     if (event->button() & Qt::LeftButton) {
@@ -167,6 +168,7 @@ void Robot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void Robot::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    setZValue(0);
     if (event->button() & Qt::LeftButton) {
         grabbed = false;
         ungrabMouse();
