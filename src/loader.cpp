@@ -22,11 +22,16 @@ Room *Loader::load(QWidget *window) {
     if (!file.is_open())
         throw runtime_error("File cannot be accessed");
 
+    bool sroom = false;
     auto ident = read_ident();
     while (ident != "") {
         if (ident == "room") {
+            if (sroom)
+                throw runtime_error("Room can be set only once");
+
             auto size = read_size();
             window->resize(size.width(), size.height() + 80);
+            sroom = true;
         } else if (ident == "obstacle") {
             room->add_obstacle(unique_ptr<Obstacle>(load_obstacle()));
         } else if (ident == "robot") {
