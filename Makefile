@@ -1,5 +1,4 @@
-# TODO SET PROPER VALUES BEFORE SUBMIT
-BUILD_TYPE=Debug
+BUILD_TYPE=Release
 PARALEL=-j $(shell nproc)
 
 ARCHIVE=xsleza26-xstigl00.tar.gz
