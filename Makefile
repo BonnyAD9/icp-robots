@@ -23,7 +23,7 @@ doxygen:
 
 .PHONY: pack
 pack:
-	tar czf $(ARCHIVE) -- src/* Doxyfile Makefile README.txt
+	tar czf $(ARCHIVE) -- src/* Doxyfile Makefile README.txt class-diagram.pdf
 
 .PHONY: clean
 clean:
