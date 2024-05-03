@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @author Jakub Antonín Štigler (xstigl00)
+ * @brief Base class for all objects that can be placed into a room.
+ * (header file)
+ */
+
 #pragma once
 
 #include <QObject>

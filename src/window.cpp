@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief The main window of the aplication (source file)
+ */
+
 #include "window.hpp"
 
 #include <memory>

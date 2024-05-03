@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Obstacle that can be placed into a room. (header file)
+ */
+
 #pragma once
 
 #include <QRectF>

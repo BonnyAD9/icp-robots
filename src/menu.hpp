@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @author Martin Slezák (xsleza26)
+ * @brief Menu for adding robots and obstacles to the room. (header file)
+ */
+
 #pragma once
 
 #include <memory>

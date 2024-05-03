@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Menu for editing robot parameters (or delete obstacle). (source file)
+ */
+
 #include "redit_menu.hpp"
 
 #include <limits>

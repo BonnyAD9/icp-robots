@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Room with robots and obstacles that can move in here. (header file)
+ */
+
 #pragma once
 
 #include <vector>

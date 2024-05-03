@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Obstacle that can be placed into a room. (source file)
+ */
+
 #include "obstacle.hpp"
 
 #include <iostream>

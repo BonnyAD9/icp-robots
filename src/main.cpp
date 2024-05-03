@@ -1,8 +1,15 @@
 /**
  * @mainpage icp-robots
- * 
+ *
  * @include ../README.txt
  */
+
+/**
+ * @file
+ * @author Jakub Antonín Štigler (xstigl00)
+ * @brief Application entry point.
+ */
+
 
 #include <iostream>
 

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Robot with basic AI (source file)
+ */
+
 #include "auto_robot.hpp"
 
 #include <QBrush>

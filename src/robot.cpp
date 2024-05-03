@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Robot that can be placed into a room. Base class for all other
+ * robots. (source file)
+ */
+
 #include "robot.hpp"
 
 #include <cmath>

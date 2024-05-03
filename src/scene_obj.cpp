@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @author Jakub Antonín Štigler (xstigl00)
+ * @brief Base class for all objects that can be placed into a room.
+ * (source file)
+ */
+
 #include "scene_obj.hpp"
 
 namespace icp {

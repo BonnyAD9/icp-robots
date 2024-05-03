@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @author Martin Slezák (xsleza26)
+ * @brief Module for loading room configuration from file. (header file)
+ */
+
 #pragma once
 
 #include <string>

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Menu for adding robots and obstacles to the room. (source file)
+ */
+
 #include "menu.hpp"
 
 #include <QPainter>

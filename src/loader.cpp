@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @author Martin Slezák (xsleza26)
+ * @brief Module for loading room configuration from file. (source file)
+ */
+
 #include "loader.hpp"
 
 namespace icp {

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Menu with simulation controls. (header file)
+ */
+
 #pragma once
 
 #include <QWidget>

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Menu for editing robot parameters (or delete obstacle). (header file)
+ */
+
 #pragma once
 
 #include <QWidget>

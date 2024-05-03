@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @authors Martin Slezák (xsleza26), Jakub Antonín Štigler (xstigl00)
+ * @brief Menu with simulation controls. (source file)
+ */
+
 #include "sim_controls.hpp"
 
 namespace icp {
