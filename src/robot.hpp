@@ -56,11 +56,6 @@ public:
     virtual void move(qreal delta, qreal distance);
 
     /**
-     * @brief Gets the position change from the last move.
-     */
-    QPointF last_move();
-
-    /**
      * @brief Checks whether the robot is grabbed.
      */
     inline bool is_grabbed() const { return grabbed; }
@@ -159,7 +154,6 @@ private:
     qreal mspeed;
 
     bool grabbed;
-    QPointF last_move_vec;
     QGraphicsEllipseItem *eye;
 };
 

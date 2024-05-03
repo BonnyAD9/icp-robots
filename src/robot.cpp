@@ -41,8 +41,7 @@ Robot::Robot(
     QGraphicsEllipseItem(
         QRectF(position, QSizeF(ROBOT_DIAMETER, ROBOT_DIAMETER))
     ),
-    grabbed(false),
-    last_move_vec(0, 0)
+    grabbed(false)
 {
     setBrush(QBrush(QColor(0xcc, 0x55, 0xcc)));
     setPen(QPen(QColor(0xff, 0xff, 0xff), BORDER_THICKNESS));
@@ -66,12 +65,7 @@ Robot::Robot(Robot *other) : Robot(
 ) {}
 
 void Robot::move(qreal delta, qreal distance) {
-    last_move_vec = step() * delta;
-    move_by(last_move_vec);
-}
-
-QPointF Robot::last_move() {
-    return last_move_vec;
+    move_by(step() * delta);
 }
 
 QRectF Robot::hitbox() const {
