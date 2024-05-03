@@ -254,6 +254,11 @@ void Room::timerEvent(QTimerEvent *event) {
 }
 
 void Room::keyPressEvent(QKeyEvent *event) {
+    if (selected && event->key() == Qt::Key_Delete) {
+        remove_obj(selected);
+        return;
+    }
+
     auto robot = dynamic_cast<ControlRobot *>(selected);
     if (!robot || timer == 0)
         return;

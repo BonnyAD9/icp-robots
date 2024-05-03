@@ -52,6 +52,13 @@ void ObstacleButton::move(QPointF position) {
 
 void ObstacleButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
+        setPen(QPen(
+            QColor(0xff, 0xff, 0x55),
+            6,
+            Qt::SolidLine,
+            Qt::SquareCap,
+            Qt::PenJoinStyle::SvgMiterJoin
+        ));
         setCursor(Qt::ClosedHandCursor);
         grabMouse();
     }
@@ -66,6 +73,13 @@ void ObstacleButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
 void ObstacleButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
+        setPen(QPen(
+            QColor(0xff, 0xff, 0xff),
+            6,
+            Qt::SolidLine,
+            Qt::SquareCap,
+            Qt::PenJoinStyle::SvgMiterJoin
+        ));
         ungrabMouse();
         auto rec = rect();
         emit add_obstacle(rec);
@@ -128,6 +142,7 @@ void RobotButton::move(QPointF position) {
 
 void RobotButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
+        setPen(QPen(QColor(0xff, 0xff, 0x55), 6));
         setCursor(Qt::ClosedHandCursor);
         grabMouse();
     }
@@ -148,6 +163,7 @@ void RobotButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
 void RobotButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
+        setPen(QPen(QColor(0xff, 0xff, 0xff), 6));
         ungrabMouse();
         auto rec = rect();
         emit add_robot(rec.topLeft());
@@ -245,12 +261,16 @@ void Menu::handle_close_btn() {
 
 void Menu::handle_obstacle_btn(QRectF rec) {
     setVisible(false);
-    emit add_obstacle(new Obstacle(rec));
+    auto obs = new Obstacle(rec);
+    emit add_obstacle(obs);
+    obs->set_selected();
 }
 
 void Menu::handle_robot_btn(QPointF point) {
     setVisible(false);
-    emit add_robot(new AutoRobot(point));
+    auto rob = new AutoRobot(point);
+    emit add_robot(rob);
+    rob->set_selected();
 }
 
 } // namespace icp
