@@ -126,9 +126,10 @@ void AutoRobot::save(ofstream &file) {
     }
 
     file << "auto_robot: [" << hitbox().x() << ", " << hitbox().y()
-        << "] { speed: " << speed() << ", rotation_speed: " << rot_speed
-        << ", elide_distance: " << elide_dist << ", elide_rotation: "
-        << elide_rot << ", angle: " << ang << " }" << endl;
+        << "] { speed: " << speed() << ", rotation_speed: "
+        << rot_speed / M_PI * 180 << ", elide_distance: " << elide_dist
+        << ", elide_rotation: " << elide_rot / M_PI * 180
+        << ", angle: " << ang << " }" << endl;
 }
 
 qreal AutoRobot::edist() const {

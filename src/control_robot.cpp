@@ -103,8 +103,8 @@ void ControlRobot::save(ofstream &file) {
     }
 
     file << "control_robot: [" << hitbox().x() << ", " << hitbox().y()
-        << "] { speed: " << speed() << ", rotation_speed: " << rot_speed
-        << ", angle: " << ang << " }" << endl;
+        << "] { speed: " << speed() << ", rotation_speed: "
+        << rot_speed / M_PI * 180 << ", angle: " << ang << " }" << endl;
 }
 
 qreal ControlRobot::rspeed() const {

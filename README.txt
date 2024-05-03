@@ -4,8 +4,8 @@ icp-robots
     Jakub Antonín Štigler (xstigl00)
 
   Obecné informace:
-    Pro grafické rozhraní jsme využili knihovnu Qt. Aplikaci jsme vyvijeli ve
-    verzi Qt6, ale je kompatibilbí i s verzí Qt5.
+    Pro grafické rozhraní jsme využili knihovnu Qt. Aplikaci jsme vyvíjeli ve
+    verzi Qt6, ale je kompatibilní i s verzí Qt5.
 
     Aktuální konfigurace cmake v `src/CMakeLists.txt` je nastavená pro
     kompilaci s knihovnou Qt5.
@@ -15,15 +15,15 @@ icp-robots
 
   Diagram tříd:
     Je v souboru `class-diagram.pdf`. V diagramu nejsou uvedené metody nebo
-    vlastnosti tříd které nejsou důležité pro demonstraci struktury programu.
+    vlastnosti tříd, které nejsou důležité pro demonstraci struktury programu.
     Všechny uvedené vlastnosti tříd jsou zpřístupněné pomocí metod, a proto se
-    i na některých místech oběvuje přepisování poděděných vlastností. Některé
+    i na některých místech objevuje přepisování poděděných vlastností. Některé
     vlastnosti jsou zpřístupněny jen pro čtení.
 
-    V diagramu se vyskytují i třídy z Qt které jsou nadtřídami některých našich
-    tříd. U nich nejsou vypsány jejich vlastnosti a metody, a jsou u nich
-    zobrazené jen relevantní nadtřídy. Jsou to třídy: `QObject`, `QWidget`,
-    `QGraphicsRectItem`, `QGraphicsEllipseItem` a `QGraphicsScene`.
+    V diagramu se vyskytují i třídy z Qt, které jsou nadtřídami některých
+    našich tříd. U nich nejsou vypsány jejich vlastnosti a metody, a jsou u
+    nich zobrazené jen relevantní nadtřídy. Jsou to třídy: `QObject`,
+    `QWidget`, `QGraphicsRectItem`, `QGraphicsEllipseItem` a `QGraphicsScene`.
 
   Instrukce ke kompilaci/spuštění:
     Ke kompilaci je potřeba mít nainstalovaný make, cmake a knihovnu Qt5.
@@ -37,45 +37,45 @@ icp-robots
         Zkompiluje kód stejně jako `make build` a spustí aplikaci.
 
       `make doxygen`
-        Vygeneruje html dokumentaci do adresáře `doc/html`.
+        Vygeneruje HTML dokumentaci do adresáře `doc/html`.
 
       `make pack`
-        Zabalí celý projekt do souboru.
+        Zabalí celý projekt do archivu.
 
       `make clean`
         Smaže všechny soubory generované pomocí make příkazů.
 
   Implementované funkcionality:
-    Roboti/překážky se dají přidat přetáhnutím ze menu které se dá otevřít
+    Roboti/překážky se dají přidat přetáhnutím z menu, které se dá otevřít
     pomocí tlačítka `menu` v levém horním rohu.
 
-    Robot/překážka se dá přesouvat tažením myší pří zmáčknutém levém tlačítku.
+    Robot/překážka se dá přesouvat tažením myši při zmáčknutém levém tlačítku.
 
-    Robot/překážka se dá vybrat pomocí kliknutí leveho nebo pravého tlačítka u
-    myši. Vybraný oběkt je zvýrazněn žlutým obrysem.
+    Robot/překážka se dá vybrat pomocí kliknutí levého nebo pravého tlačítka
+    myši. Vybraný objekt je zvýrazněn žlutým obrysem.
 
-    Robot/překážka se dá smazat po vybráním pomocí tlačítka `delete` v pravém
+    Robot/překážka se dá smazat po vybrání pomocí tlačítka `delete` v pravém
     horním rohu nebo zmáčknutím klávesy `Delete`. Odvybrat se dá robot/překážka
     pomocí tlačítka `deselect` v pravém horním rohu.
 
-    Parametry robota se dají měnit v po jeho vybrání v horním menu. Změnitelné
+    Parametry robota se dají měnit po jeho vybrání v horním menu. Změnitelné
     parametry jsou (z leva doprava):
       `type`
-        Typ robota, dá se vybrat mezi moýnostmi:
+        Typ robota, dá se vybrat mezi možnostmi:
           `Auto`
             Autonomní robot, jede dopředu dokud před sebou nevidí překážku v
             dané vzdálenosti, pak se otočí o daný úhel a zase pokračuje
             dopředu. Má modrou barvu.
 
           `Control`
-            Robot který se dá ovládat uživatelem pomocí klávesnice. Má zelenou
+            Robot, který se dá ovládat uživatelem pomocí klávesnice. Má zelenou
             barvu.
 
           `Dummy`
-            Robot který jede pořád dopředu. Má fialovou barvu.
+            Robot, který jede pořád dopředu. Má fialovou barvu.
 
       `speed`
-        Nastavuje rychlost pohybu robota. (v pixelech za sekundu)
+        Nastavuje rychlost pohybu robota (v pixelech za sekundu).
 
       `angle`
         Nastavuje aktuální otočení robota (ve stupních).
@@ -85,22 +85,22 @@ icp-robots
         nastavit u robota typu `Dummy`.
 
       `d. dist.`
-        Nastavuje vzdálenost ve které autonomní robot detekuje překážku (v
+        Nastavuje vzdálenost, ve které autonomní robot detekuje překážku (v
         pixelech).
 
       `r. dist.`
-        Nastavuje jak moc se autonomní robot otočí když detekuje překážku (ve
+        Nastavuje jak moc se autonomní robot otočí, když detekuje překážku (ve
         stupních). Směr otáčení se nastavuje pomocí znaménka.
 
     Robot typu `Control` se ovládá pomocí šipek na klávesnici (dopředu,
-    doprava, doleva) a aby šel ovládat tak musí být vybrán.
+    doprava, doleva) a aby šel ovládat, tak musí být vybrán.
 
     Simulace se dá pozastavit/spustit pomocí tlačítka `play`/`pause` v pravém
     dolním rohu.
 
-    Konfigurace místnosti se dá ukládatat/načíst z souboru který se napíše do
-    pole v dolní části. Uložit do souboru se dá pomocí tlačítka `save` a načíst
-    se dá pomocí tlačítka `load`.
+    Konfigurace místnosti se dá ukládat/načíst do/ze souboru, který se napíše
+    do pole v dolní části. Uložit do souboru se dá pomocí tlačítka `save` a
+    načíst se dá pomocí tlačítka `load`.
 
   Formát souboru pro konfiguraci místnosti:
     Nejjednodušší bude ukázat na příkladu:
@@ -126,15 +126,16 @@ icp-robots
     `obstacle` definuje překážku. Překážka musí mít specifikovanou velikost
     (v tomto případě 60x60 pixelů) a pozici levého horního rohu ([100, 200]).
 
-    `robot` vytváří robota typu `Dummy`. Musí mít specifkovanou pozici levého
-    horního rohu svého obrysového čtverce ([200, 201]) a dále můžou být
-    specifikované parametry. Parametry které nejsou specifikované budou mít
+    `robot` vytváří robota typu `Dummy`. Musí mít specifikovanou pozici levého
+    horního rohu svého obrysového čtverce ([200, 201]) a dále mohou být
+    specifikované parametry. Parametry, které nejsou specifikované, budou mít
     přiřazenou výchozí hodnotu. Povolené parametry jsou: `speed` a `angle`.
 
-    `auto` vytváří robota typu `Auto`. Podobně jako `robot` má pozici a
+    `auto_robot` vytváří robota typu `Auto`. Podobně jako `robot` má pozici a
     parametry. Povolené parametry jsou: `speed`, `angle`, `elide_distance`,
     `rotation_speed` a `elide_rotation`.
 
-    `auto` vytváří robota typu `Control`. Podobně jako `robot` má pozici a
-    parametry. Povolené parametry jsou: `speed`, `angle` a `rotation_speed`.
+    `control_robot` vytváří robota typu `Control`. Podobně jako `robot` má
+    pozici a parametry. Povolené parametry jsou: `speed`, `angle` a
+    `rotation_speed`.
 

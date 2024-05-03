@@ -168,7 +168,9 @@ AutoRobot *Loader::load_auto_robot() {
     }
 
     angle = -angle * M_PI / 180.0;
-    auto rob = new AutoRobot(pos, angle, speed, el, el_r, r);
+    auto rob = new AutoRobot(
+        pos, angle, speed, el, el_r * M_PI / 180, r * M_PI / 180
+    );
     rob->set_hitbox(QRectF(pos, QSizeF(0, 0)));
     return rob;
 }
@@ -218,7 +220,7 @@ ControlRobot *Loader::load_control_robot() {
     }
 
     angle = -angle * M_PI / 180.0;
-    auto rob = new ControlRobot(pos, angle, speed, r);
+    auto rob = new ControlRobot(pos, angle, speed, r * M_PI / 180);
     rob->set_hitbox(QRectF(pos, QSizeF(0, 0)));
     return rob;
 }

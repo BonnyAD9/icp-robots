@@ -143,6 +143,8 @@ void Robot::save(ofstream &file) {
 
     file << "robot: [" << hitbox().x() << ", " << hitbox().y() << "] { speed: "
         << mspeed << ", angle: " << ang << " }" << endl;
+
+    
 }
 
 //---------------------------------------------------------------------------//

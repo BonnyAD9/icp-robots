@@ -240,15 +240,21 @@ void Room::save(string filename) {
 
     file << "room: " << width() << "x" << height() << endl;
     for (auto obst : obstacles) {
-        file << "obstacle: " << obst->rect().width() << "x"
-            << obst->rect().height() << " [" << obst->rect().x() << ", "
-            << obst->rect().y() << "]" << endl;
+        file << "obstacle: " << obst->hitbox().width() << "x"
+            << obst->hitbox().height() << " [" << obst->hitbox().x() << ", "
+            << obst->hitbox().y() << "]" << endl;
     }
 
     for (auto rob : robots) {
         rob->save(file);
     }
     file.close();
+
+    QMessageBox::information(
+        nullptr,
+        "Success",
+        "The room was successfully saved"
+    );
 }
 
 //---------------------------------------------------------------------------//
